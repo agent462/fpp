@@ -157,6 +157,8 @@ private:
     void prepData(FrameData& d, unsigned char* channelData);
     void sendData(FrameData& d);
     void bitFlipData(uint8_t* stringChannelData, uint8_t* bitSwapped, size_t len);
+    void generateDynamicV5Packets();
+    void detectV5SmartReceivers();
 
     void createOutputLengths(FrameData& d, const std::string& pfx);
 

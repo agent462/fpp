@@ -324,6 +324,9 @@ int BBShiftStringOutput::Init(Json::Value config) {
     }
     if (hasV5SR) {
         setupFalconV5Support(root, m_pru1.lastData + offset);
+        // SR detection at startup so receiver
+        // is immediately available via /api/fppd/ports
+        detectV5SmartReceivers();
     }
 
     PixelString::AutoCreateOverlayModels(m_strings, m_autoCreatedModelNames);
@@ -618,28 +621,7 @@ void BBShiftStringOutput::PrepData(unsigned char* channelData) {
     prepData(m_pru1, channelData);
     m_testCycle = -1;
 
-    if (m_pru1.curV5ConfigPacket > FIRST_LOOPING_CONFIG_PACKET && falconV5Support && m_pru1.v5_config_packets[m_pru1.curV5ConfigPacket] == nullptr) {
-        std::vector<std::array<uint8_t, 64>> packets;
-        packets.resize(m_strings.size());
-        for (auto& p : packets) {
-            memset(&p[0], 0, 64);
-        }
-        bool listen = false;
-        if (falconV5Support->generateDynamicPacket(packets, listen)) {
-            if (m_pru0.dynamicPacketInfo == &m_pru0.dynamicPacketInfo1) {
-                m_pru0.dynamicPacketInfo = &m_pru0.dynamicPacketInfo2;
-                m_pru1.dynamicPacketInfo = &m_pru1.dynamicPacketInfo2;
-            } else {
-                m_pru0.dynamicPacketInfo = &m_pru0.dynamicPacketInfo1;
-                m_pru1.dynamicPacketInfo = &m_pru1.dynamicPacketInfo1;
-            }
-            encodeFalconV5Packet(packets, m_pru0.dynamicPacketInfo->data, m_pru1.dynamicPacketInfo->data);
-            m_pru0.dynamicPacketInfo->listen = listen;
-            m_pru1.dynamicPacketInfo->listen = listen;
-            m_pru0.v5_config_packets[m_pru0.curV5ConfigPacket] = m_pru0.dynamicPacketInfo;
-            m_pru1.v5_config_packets[m_pru1.curV5ConfigPacket] = m_pru1.dynamicPacketInfo;
-        }
-    }
+    generateDynamicV5Packets();
 
     /*
     uint32_t *iframe = (uint32_t*)m_pru1.curData;
@@ -762,6 +744,73 @@ void BBShiftStringOutput::StoppingOutput() {
     }
     m_pru1.curV5ConfigPacket = 0;
     m_pru0.curV5ConfigPacket = 0;
+}
+
+void BBShiftStringOutput::generateDynamicV5Packets() {
+    if (m_pru1.curV5ConfigPacket > FIRST_LOOPING_CONFIG_PACKET && falconV5Support &&
+        m_pru1.v5_config_packets[m_pru1.curV5ConfigPacket] == nullptr) {
+        std::vector<std::array<uint8_t, 64>> packets;
+        packets.resize(m_strings.size());
+        for (auto& p : packets) {
+            memset(&p[0], 0, 64);
+        }
+        bool listen = false;
+        if (falconV5Support->generateDynamicPacket(packets, listen)) {
+            if (m_pru0.dynamicPacketInfo == &m_pru0.dynamicPacketInfo1) {
+                m_pru0.dynamicPacketInfo = &m_pru0.dynamicPacketInfo2;
+                m_pru1.dynamicPacketInfo = &m_pru1.dynamicPacketInfo2;
+            } else {
+                m_pru0.dynamicPacketInfo = &m_pru0.dynamicPacketInfo1;
+                m_pru1.dynamicPacketInfo = &m_pru1.dynamicPacketInfo1;
+            }
+            encodeFalconV5Packet(packets, m_pru0.dynamicPacketInfo->data, m_pru1.dynamicPacketInfo->data);
+            m_pru0.dynamicPacketInfo->listen = listen;
+            m_pru1.dynamicPacketInfo->listen = listen;
+            m_pru0.v5_config_packets[m_pru0.curV5ConfigPacket] = m_pru0.dynamicPacketInfo;
+            m_pru1.v5_config_packets[m_pru1.curV5ConfigPacket] = m_pru1.dynamicPacketInfo;
+        }
+    }
+}
+
+void BBShiftStringOutput::detectV5SmartReceivers() {
+    LogInfo(VB_CHANNELOUT, "BBShiftString: Detecting smart receivers...\n");
+
+    int totalReceivers = 0;
+    int numChains = 0;
+    for (auto* rc : falconV5Support->getReceiverChains()) {
+        totalReceivers += rc->getReceiverCount();
+        numChains++;
+    }
+    const int FRAMES_PER_RECEIVER = 5;  // 1 query + 4 margin for response processing
+    int framesToSend = FIRST_LOOPING_CONFIG_PACKET + ((totalReceivers + numChains) * FRAMES_PER_RECEIVER);
+
+    LogInfo(VB_CHANNELOUT, "BBShiftString: Sending %d detection frames (%d receivers, %d chains)\n",
+            framesToSend, totalReceivers, numChains);
+
+    // formattedData for blank output
+    if (m_pru0.formattedData) {
+        memset(m_pru0.formattedData, 0, m_pru0.frameSize);
+        m_pru0.outputStringLen = m_pru0.maxStringLen;
+    }
+    if (m_pru1.formattedData) {
+        memset(m_pru1.formattedData, 0, m_pru1.frameSize);
+        m_pru1.outputStringLen = m_pru1.maxStringLen;
+    }
+
+    for (int frame = 0; frame < framesToSend; frame++) {
+        m_curFrame++;
+        generateDynamicV5Packets();
+        SendData(nullptr);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    falconV5Support->processListenerData();
+
+    m_pru0.curV5ConfigPacket = 0;
+    m_pru1.curV5ConfigPacket = 0;
+
+    LogInfo(VB_CHANNELOUT, "BBShiftString: Smart receiver detection complete\n");
 }
 constexpr int numPacketTypes = 12;
 static void invertPackets(std::array<std::array<uint8_t, 64>, numPacketTypes>& pckt) {
