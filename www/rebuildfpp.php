@@ -1,5 +1,5 @@
 <?
-header( "Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: *");
 
 $wrapped = 0;
 
@@ -15,16 +15,18 @@ require_once("common.php");
 DisableOutputBuffering();
 
 if (!$wrapped) {
-?>
-<head>
-<title>
-Rebuild FPP
-</title>
-</head>
-<body>
-<h2>Rebuild FPP</h2>
-<pre>
-<?
+    ?>
+
+    <head>
+        <title>
+            Rebuild FPP
+        </title>
+    </head>
+
+    <body>
+        <h2>Rebuild FPP</h2>
+        <pre>
+    <?
 }
 ?>
 Stopping fppd...
@@ -54,13 +56,12 @@ exec($SUDO . " rm -f /tmp/cache_*.cache");
 Rebuild Complete.
 <?
 if (!$wrapped) {
-?>
-<a href='index.php'>Go to FPP Main Status Page</a><br>
-<a href='about.php'>Go back to FPP About page</a><br>
+    ?>
+    <a href='index.php'>Go to FPP Main Status Page</a><br>
+    <a href='system-upgrade.php'>Go back to FPP Upgrade page</a><br>
 
-</body>
-</html>
-<?
+    </body>
+    </html>
+    <?
 }
 ?>
-
