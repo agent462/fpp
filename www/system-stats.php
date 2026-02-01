@@ -58,11 +58,35 @@
             receivedChecks[check.id] = true;
 
             if (statusEl.length) {
-                // Update the status content
-                statusEl.html(
+                var statusHtml =
                     '<i class="fas ' + getStatusIcon(check.status) + ' fpp-health-check__status-icon"></i>' +
-                    '<span class="fpp-health-check__status-text" title="' + check.message + '">' + check.message + '</span>'
-                );
+                    '<span class="fpp-health-check__status-text" title="' + check.message + '">' + check.message + '</span>';
+
+                // Add expand icon if warning details are present
+                if (check.details && check.details.length > 0) {
+                    statusHtml += '<i class="fas fa-chevron-down fpp-health-check__expand-icon"></i>';
+                }
+
+                statusEl.html(statusHtml);
+
+                // Expandable details (warnings)
+                if (check.details && check.details.length > 0) {
+                    itemEl.addClass('fpp-health-check__item--expandable');
+                    itemEl.off('click').on('click', function() {
+                        $(this).toggleClass('fpp-health-check__item--expanded');
+                        $('#details-' + check.id).toggleClass('fpp-health-check__details--visible');
+                    });
+
+                    $('#details-' + check.id).remove();
+                    var detailsHtml = '<div class="fpp-health-check__details" id="details-' + check.id + '"><ul>';
+                    check.details.forEach(function(detail) {
+                        var escaped = $('<span>').text(detail).html();
+                        detailsHtml += '<li><i class="fas fa-circle"></i> ' + escaped + '</li>';
+                    });
+                    detailsHtml += '</ul></div>';
+                    itemEl.after(detailsHtml);
+                }
+
                 // Show the item if it was hidden (conditional check)
                 if (itemEl.length && conditionalChecks.includes(check.id)) {
                     itemEl.show();
@@ -82,7 +106,7 @@
             left: [
                 { id: 'fppd', label: 'FPPD Daemon', icon: 'fa-play-circle', static: true },
                 { id: 'warnings', label: 'FPPD Warnings', icon: 'fa-exclamation-triangle', static: true },
-                { id: 'hostname', label: 'Hostname', icon: 'fa-server', static: true },
+                { id: 'hostname', label: 'Unique Hostname', icon: 'fa-server', static: true },
                 { id: 'rootdisk', label: 'Root Filesystem', icon: 'fa-hdd', static: true },
                 { id: 'ntp', label: 'Time Sync (NTP)', icon: 'fa-clock', static: true },
                 { id: 'scheduler', label: 'Scheduler', icon: 'fa-calendar-alt', static: false }
