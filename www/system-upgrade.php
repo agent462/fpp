@@ -32,117 +32,6 @@
     }
     unset($output);
     ?>
-    <style>
-        .faq-accordion .accordion-button {
-            font-size: 0.85em;
-            padding: 0.6rem 0.85rem;
-            background-color: #fff;
-            border: none;
-            font-weight: 600;
-            color: #333;
-            position: relative;
-            padding-right: 2.5rem;
-        }
-
-        .faq-accordion .accordion-button:not(.collapsed) {
-            background-color: #f8f9fa;
-            color: #000;
-            box-shadow: none;
-        }
-
-        .faq-accordion .accordion-button:focus {
-            box-shadow: none;
-            border-color: rgba(0, 0, 0, .125);
-        }
-
-        .faq-accordion .accordion-button::after {
-            content: '\f078';
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            position: absolute;
-            right: 0.85rem;
-            transition: transform 0.2s ease-in-out;
-            font-size: 0.75em;
-        }
-
-        .faq-accordion .accordion-button:not(.collapsed)::after {
-            transform: rotate(180deg);
-        }
-
-        .faq-accordion .accordion-body {
-            font-size: 0.85em;
-            padding: 0.85rem 1rem;
-            line-height: 1.5;
-            background-color: #f8f9fa;
-            color: #555;
-        }
-
-        .faq-accordion .accordion-item {
-            margin-bottom: 0.35rem;
-            border: 1px solid #dee2e6;
-            border-radius: 0.25rem;
-            overflow: hidden;
-        }
-
-        .faq-accordion .accordion-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .resources-card {
-            background-color: #f8f9fa;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 20px;
-        }
-
-        .resources-card h3 {
-            margin-bottom: 15px;
-        }
-
-        .resources-card ul {
-            list-style: none;
-            padding-left: 0;
-        }
-
-        .resources-card ul li {
-            padding: 5px 0;
-        }
-
-        .resources-card ul li i {
-            width: 20px;
-            text-align: center;
-        }
-
-        .comparison-table {
-            margin: 30px 0;
-        }
-
-        .comparison-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .comparison-table th {
-            background-color: #f8f9fa;
-            padding: 15px;
-            text-align: left;
-            border-bottom: 2px solid #dee2e6;
-        }
-
-        .comparison-table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #dee2e6;
-        }
-
-        .comparison-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .comparison-table .feature-name {
-            font-weight: bold;
-        }
-
-    </style>
     <script>
         var osAssetMap = {};
 
@@ -438,7 +327,6 @@
                     // Regex to match versions below 9.0 (With N-1 - update this yearly)
                     var legacyVersionRegex = /[-_]v?[0-8]\./i;
 
-                    // Show/hide legacy OS warning
                     if (showLegacy) {
                         $('#legacyOSWarning').show();
                     } else {
@@ -452,7 +340,6 @@
                                 url: file["url"]
                             };
 
-                            // Skip versions below 9.0 unless Legacy checkbox is checked or dev mode
                             var isLegacyVersion = legacyVersionRegex.test(file['filename']);
                             if (isLegacyVersion && !showLegacy && !devMode) {
                                 continue;
@@ -485,7 +372,6 @@
                     var osUpdateFiles = <?php echo json_encode($osUpdateFiles); ?>;
                     var select = $('#osSelect');
                     osUpdateFiles.forEach(element => {
-                        // Skip legacy versions for downloaded files too
                         var isLegacyVersion = legacyVersionRegex.test(element);
                         if (isLegacyVersion && !showLegacy && !devMode) {
                             return;
@@ -737,9 +623,20 @@
             }
         }
 
+        function initFaqAccordion() {
+            document.querySelectorAll('.fpp-faq__item').forEach(item => {
+                item.querySelector('.fpp-faq__question').addEventListener('click', function() {
+                    const isOpen = item.classList.contains('fpp-faq__item--open');
+                    document.querySelectorAll('.fpp-faq__item').forEach(i => i.classList.remove('fpp-faq__item--open'));
+                    if (!isOpen) item.classList.add('fpp-faq__item--open');
+                });
+            });
+        }
+
         $(document).ready(function () {
             UpdateVersionInfo();
             PopulateOSSelect();
+            initFaqAccordion();
         });
     </script>
 </head>
@@ -799,10 +696,10 @@
                 <? } ?>
 
                 <!-- Upgrade Options -->
-                <div class="row" style="display: flex; flex-wrap: wrap;">
+                <div class="row">
                     <!-- FPP Software Update -->
-                    <div class="col-md-6" style="display: flex;">
-                        <div class="fpp-card fpp-card--accent fpp-card--accent-success" style="flex: 1; display: flex; flex-direction: column;">
+                    <div class="col-md-6 fpp-col-flex">
+                        <div class="fpp-card fpp-card--accent fpp-card--accent-success fpp-card--flex">
                             <div class="fpp-card__header">
                                 <div class="fpp-card__icon fpp-card__icon--success">
                                     <i class="fas fa-sync-alt"></i>
@@ -810,7 +707,7 @@
                                 <div>
                                     <h3 class="fpp-card__title">
                                         Update FPP Software
-                                        <span id="gitUpdateBadge" class="fpp-badge fpp-badge--success" style="display: none; font-size: 0.5em; padding: 2px 6px;">Update Available</span>
+                                        <span id="gitUpdateBadge" class="fpp-badge fpp-badge--success fpp-badge--sm" style="display: none;">Update Available</span>
                                     </h3>
                                     <p class="fpp-card__subtitle">Get the latest bug fixes and features. This is safe and quick.</p>
                                 </div>
@@ -827,7 +724,7 @@
                                 </div>
                                 <div class="fpp-info-box fpp-info-box--info">
                                     <div class="fpp-info-box__title"><i class="fas fa-info-circle"></i> What it does</div>
-                                    <p>Downloads the latest code changes for your version and rebuilds FPP. Typically takes 2-5 minutes. No reboot required.</p>
+                                    <p>Downloads the latest code changes for your version and rebuilds FPP. Typically takes 2-5 minutes. Reboots are not usually required.</p>
                                 </div>
                             </div>
 
@@ -846,7 +743,7 @@
                                 <span class="fpp-version-indicator__label">You're up to date!</span>
                             </div>
 
-                            <div class="card-actions" style="display: flex; align-items: center; gap: var(--fpp-sp-md); flex-wrap: wrap; margin-top: auto; padding-top: var(--fpp-sp-lg);">
+                            <div class="fpp-card__actions">
                                 <button class="fpp-btn fpp-btn--success" onclick="UpgradeFPP();">
                                     <i class="fas fa-download"></i> Update FPP Now
                                 </button>
@@ -878,7 +775,7 @@
                                         $upgradeSources = array("github.com" => "github.com") + $upgradeSources;
                                     }
                                     ?>
-                                    <div class="advanced-options" style="margin-left: auto; display: flex; align-items: center; gap: var(--fpp-sp-sm); font-size: var(--fpp-fs-sm); color: var(--fpp-text-muted);">
+                                    <div class="fpp-advanced-options">
                                         <span class="fpp-badge fpp-badge--info">Adv</span>
                                         <span>Source:</span>
                                         <? PrintSettingSelect("FPP Upgrade Source", "UpgradeSource", 0, 0, "github.com", $upgradeSources); ?>
@@ -889,8 +786,8 @@
                     </div>
 
                     <!-- Operating System Upgrade -->
-                    <div class="col-md-6" style="display: flex;">
-                        <div class="fpp-card fpp-card--accent fpp-card--accent-warning" style="flex: 1; display: flex; flex-direction: column;">
+                    <div class="col-md-6 fpp-col-flex">
+                        <div class="fpp-card fpp-card--accent fpp-card--accent-warning fpp-card--flex">
                             <div class="fpp-card__header">
                                 <div class="fpp-card__icon fpp-card__icon--warning">
                                     <i class="fas fa-hdd"></i>
@@ -914,24 +811,24 @@
                                 <div class="fpp-info-box fpp-info-box--info">
                                     <div class="fpp-info-box__title"><i class="fas fa-info-circle"></i> What it does</div>
                                     <p>Downloads a complete OS image and updates your current OS. Your media files are preserved, but backing up your configuration is strongly recommended.</p>
-                                    <span style="display: block; margin-top: var(--fpp-sp-md); color: #084298;"><strong>Important:</strong> This takes 15-30+ minutes and requires a reboot. <a href="backup.php">Backup first!</a></span>
+                                    <span class="fpp-text-info-dark fpp-note"><strong>Important:</strong> This takes 15-30+ minutes and requires a reboot. <a href="backup.php">Backup first!</a></span>
                                 </div>
                             </div>
 
                             <!-- Warning alert -->
-                            <div class="fpp-alert fpp-alert--warning fpp-alert--compact" style="margin-bottom: var(--fpp-sp-lg);">
+                            <div class="fpp-alert fpp-alert--warning fpp-alert--compact fpp-alert--mb-lg">
                                 <i class="fas fa-exclamation-triangle"></i>
                                 <span><strong>Warning:</strong> OS upgrade will reboot your system. Ensure no shows are running.</span>
                             </div>
 
                             <!-- Legacy OS warning (shown when checkbox is checked) -->
-                            <div id="legacyOSWarning" class="fpp-alert fpp-alert--warning fpp-alert--compact" style="display: none; margin-bottom: var(--fpp-sp-md);">
+                            <div id="legacyOSWarning" class="fpp-alert fpp-alert--warning fpp-alert--compact fpp-alert--mb-md" style="display: none;">
                                 <i class="fas fa-history"></i>
                                 <span>Installing a legacy OS is generally not recommended unless you're troubleshooting a specific issue.</span>
                             </div>
 
-                            <div class="card-actions" style="display: flex; align-items: center; gap: var(--fpp-sp-md); flex-wrap: wrap;">
-                                <select id="osSelect" class="form-select" onChange="OSSelectChanged();" style="font-family: var(--fpp-font-mono); font-size: var(--fpp-fs-base); padding: var(--fpp-sp-sm) var(--fpp-sp-md); background: #fff; border: 1px solid var(--fpp-border); border-radius: var(--fpp-radius-lg); color: var(--fpp-text-secondary); min-width: 240px; max-width: 100%;">
+                            <div class="fpp-card__actions">
+                                <select id="osSelect" class="form-select fpp-select" onChange="OSSelectChanged();">
                                     <option value="">-- Select OS Image --</option>
                                 </select>
                                 <button class="fpp-btn fpp-btn--warning" id="osUpgradeButton" onclick="UpgradeOS();" disabled>
@@ -946,22 +843,22 @@
                             </div>
 
                             <? if (isset($settings['uiLevel']) && $settings['uiLevel'] >= 1) { ?>
-                            <div class="checkbox-options" style="display: flex; flex-wrap: wrap; gap: var(--fpp-sp-lg); margin-top: var(--fpp-sp-md); padding-top: var(--fpp-sp-md); border-top: 1px solid var(--fpp-border-light);">
-                                <label class="checkbox-option" style="display: flex; align-items: center; gap: 0.4rem; font-size: var(--fpp-fs-sm); color: var(--fpp-text-muted); cursor: pointer;">
-                                    <input type="checkbox" id="allPlatforms" onChange="PopulateOSSelect();" style="accent-color: var(--fpp-info);">
+                            <div class="fpp-checkbox-options">
+                                <label class="fpp-checkbox-option">
+                                    <input type="checkbox" id="allPlatforms" onChange="PopulateOSSelect();">
                                     <span class="fpp-badge fpp-badge--info">Adv</span>
                                     Show All Platforms
                                     <img title='Show both BBB & Pi downloads' src='images/redesign/help-icon.svg' class='icon-help'>
                                 </label>
-                                <label class="checkbox-option" style="display: flex; align-items: center; gap: 0.4rem; font-size: var(--fpp-fs-sm); color: var(--fpp-text-muted); cursor: pointer;">
-                                    <input type="checkbox" id="LegacyOS" onChange="PopulateOSSelect();" style="accent-color: var(--fpp-info);">
+                                <label class="fpp-checkbox-option">
+                                    <input type="checkbox" id="LegacyOS" onChange="PopulateOSSelect();">
                                     <span class="fpp-badge fpp-badge--info">Adv</span>
                                     Show Legacy OS
                                     <img title='Include historic OS releases in listing' src='images/redesign/help-icon.svg' class='icon-help'>
                                 </label>
                                 <? if (isset($settings['uiLevel']) && $settings['uiLevel'] >= 3) { ?>
-                                <label class="checkbox-option" style="display: flex; align-items: center; gap: 0.4rem; font-size: var(--fpp-fs-sm); color: var(--fpp-text-muted); cursor: pointer;">
-                                    <input type="checkbox" id="keepOptFPP" style="accent-color: #8b5cf6;">
+                                <label class="fpp-checkbox-option fpp-checkbox-option--dev">
+                                    <input type="checkbox" id="keepOptFPP">
                                     <span class="fpp-badge fpp-badge--dev">Dev</span>
                                     Keep /opt/fpp
                                     <img title='WARNING: This will upgrade the OS but will not upgrade the FPP version running in /opt/fpp. This is useful for developers who are developing the code in /opt/fpp and just want the underlying OS upgraded.' src='images/redesign/help-icon.svg' class='icon-help'>
@@ -976,34 +873,27 @@
 
 
                 <? if (isset($settings['uiLevel']) && $settings['uiLevel'] >= 1) { ?>
-                    <!-- Advanced Options Card -->
-                    <div class="fpp-card fpp-card--accent fpp-card--accent-neutral fpp-card--compact">
-                        <div class="fpp-card__header">
-                            <div class="fpp-card__icon fpp-card__icon--neutral">
-                                <i class="fas fa-code"></i>
-                            </div>
-                            <div>
-                                <h3 class="fpp-card__title">
-                                    Advanced Options
-                                    <span class="fpp-badge fpp-badge--neutral">Advanced</span>
-                                </h3>
-                                <p class="fpp-card__subtitle">Tools for developers and power users</p>
-                            </div>
+                    <!-- Revert to Previous Commit Card -->
+                    <div class="fpp-card fpp-card--accent fpp-card--accent-neutral fpp-card--compact fpp-card--inline">
+                        <div class="fpp-card__content">
+                            <h3 class="fpp-card__title">
+                                <i class="fas fa-history"></i>
+                                Revert to Previous Commit
+                                <span class="fpp-badge fpp-badge--neutral">Advanced</span>
+                            </h3>
+                            <p class="fpp-card__subtitle">Need to roll back changes? Use the changelog to revert to a previous git commit while keeping your configuration.</p>
                         </div>
-                        <p style="margin: 0 0 var(--fpp-sp-md) 0; color: var(--fpp-text-secondary); font-size: var(--fpp-fs-base);">
-                            Need to roll back changes? You can revert to a previous git commit using the changelog page.
-                            This allows you to undo problematic updates while keeping your configuration.
-                        </p>
                         <button class="fpp-btn fpp-btn--secondary" onclick="window.location.href='changelog.php';">
-                            <i class="fas fa-history"></i> View Changelog &amp; Revert Options
+                            <i class="fas fa-external-link-alt"></i> View Changelog
                         </button>
                     </div>
 
                     <!-- Version Information -->
-                    <div class="fpp-card mt-4">
+                    <div class="fpp-card fpp-card--accent fpp-card--accent-neutral mt-4">
                         <div class="fpp-card__header-simple">
-                            <i class="fas fa-info-circle"></i>
-                            <h3>Version Information
+                            <h3>
+                                <i class="fas fa-info-circle"></i>
+                                Version Information
                                 <span class="fpp-badge fpp-badge--neutral">Advanced</span>
                             </h3>
                         </div>
@@ -1059,214 +949,150 @@
                     </div>
                 <? } ?>
 
-                <!-- FAQ and Resources Row -->
-                <div class="row mt-4">
-                    <!-- FAQ Section -->
-                    <div class="col-md-8">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3><i class="fas fa-question-circle"></i> Frequently Asked Questions</h3>
+                <!-- Comparison & FAQ Section - Side by Side -->
+                <div class="fpp-info-section">
+                    <!-- Comparison Panel -->
+                    <div class="fpp-info-panel">
+                        <h4 class="fpp-info-panel__title"><i class="fas fa-balance-scale"></i> Quick Comparison</h4>
+                        <table class="fpp-comparison-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Update FPP</th>
+                                    <th>Upgrade OS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Time</td>
+                                    <td class="fpp-text-success">2-5 min</td>
+                                    <td class="fpp-text-warning">15-30+ min</td>
+                                </tr>
+                                <tr>
+                                    <td>Reboot</td>
+                                    <td class="fpp-text-warning"><i class="fas fa-check"></i> Sometimes</td>
+                                    <td class="fpp-text-danger"><i class="fas fa-times"></i> Yes</td>
+                                </tr>
+                                <tr>
+                                    <td>Settings</td>
+                                    <td class="fpp-text-success"><i class="fas fa-check"></i> Kept</td>
+                                    <td class="fpp-text-warning"><i class="fas fa-exclamation"></i> Backup*</td>
+                                </tr>
+                                <tr>
+                                    <td>Media Files</td>
+                                    <td class="fpp-text-success"><i class="fas fa-check"></i> Kept</td>
+                                    <td class="fpp-text-success"><i class="fas fa-check"></i> Kept</td>
+                                </tr>
+                                <tr>
+                                    <td>Risk Level</td>
+                                    <td class="fpp-text-success">Low</td>
+                                    <td class="fpp-text-warning">Medium</td>
+                                </tr>
+                                <tr>
+                                    <td>OS Security Patches</td>
+                                    <td class="fpp-text-warning"><i class="fas fa-times"></i> No</td>
+                                    <td class="fpp-text-success"><i class="fas fa-check"></i> Yes</td>
+                                </tr>
+                                <tr>
+                                    <td>Major Version Jump</td>
+                                    <td class="fpp-text-warning"><i class="fas fa-times"></i> No</td>
+                                    <td class="fpp-text-success"><i class="fas fa-check"></i> Yes</td>
+                                </tr>
+                                <tr>
+                                    <td>New Hardware Support</td>
+                                    <td class="fpp-text-warning"><i class="fas fa-times"></i> No</td>
+                                    <td class="fpp-text-success"><i class="fas fa-check"></i> Yes</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p class="fpp-comparison-note">* Backup strongly recommended before OS upgrade</p>
+                    </div>
+
+                    <!-- FAQ Panel -->
+                    <div class="fpp-info-panel">
+                        <h4 class="fpp-info-panel__title"><i class="fas fa-question-circle"></i> Frequently Asked Questions</h4>
+                        <div class="fpp-faq" id="upgradeFaq">
+                            <div class="fpp-faq__item">
+                                <div class="fpp-faq__question">
+                                    Which upgrade should I choose?
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="fpp-faq__answer">
+                                    <div class="fpp-faq__answer-inner">
+                                        For most users, <strong>"Update FPP Software"</strong> is all you need in season. It keeps your system current with bug fixes and new features. We recommend OS and major upgrades at least once a year.
+                                    </div>
+                                </div>
                             </div>
-                            <div class="card-body">
-                                <div class="accordion faq-accordion" id="faqAccordion">
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="faq1Header">
-                                            <button class="accordion-button collapsed" type="button"
-                                                data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="false">
-                                                What's the difference between FPP Software Update and OS Upgrade?
-                                            </button>
-                                        </h2>
-                                        <div id="faq1" class="accordion-collapse collapse"
-                                            data-bs-parent="#faqAccordion">
-                                            <div class="accordion-body">
-                                                <b>FPP Software Update</b> updates only the FPP application code (fppd,
-                                                web
-                                                interface, scripts) from your current git branch. This is quick and
-                                                doesn't
-                                                require a reboot unless there are system-level changes.
-                                                <br><br>
-                                                <b>OS Upgrade</b> replaces the entire operating system image, including
-                                                the base
-                                                OS, kernel, drivers, and FPP. This is more comprehensive but takes
-                                                longer and
-                                                always requires a reboot.
-                                            </div>
-                                        </div>
+                            <div class="fpp-faq__item">
+                                <div class="fpp-faq__question">
+                                    When should I upgrade the OS?
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="fpp-faq__answer">
+                                    <div class="fpp-faq__answer-inner">
+                                        OS upgrades are typically only needed when moving to a new major FPP version, when release notes specifically recommend it, or if you're experiencing OS-level issues. It is recommend, at minimum, to do this once per year.
                                     </div>
-
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="faq2Header">
-                                            <button class="accordion-button collapsed" type="button"
-                                                data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false">
-                                                Will my settings and sequences be preserved?
-                                            </button>
-                                        </h2>
-                                        <div id="faq2" class="accordion-collapse collapse"
-                                            data-bs-parent="#faqAccordion">
-                                            <div class="accordion-body">
-                                                Yes! Both update methods preserve your configuration files, sequences,
-                                                playlists, and media files. Your settings are stored in /home/fpp/media
-                                                which is
-                                                not affected by updates.
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="fpp-faq__item">
+                                <div class="fpp-faq__question">
+                                    What's the difference between FPP and OS versions?
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="fpp-faq__answer">
+                                    <div class="fpp-faq__answer-inner">
+                                        <strong>FPP</strong> is the software that runs your display. <strong>OS</strong> is the underlying operating system (Debian Linux). They can be updated independently but major FPP versions usually require an OS Upgrade.
                                     </div>
-
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="faq3Header">
-                                            <button class="accordion-button collapsed" type="button"
-                                                data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false">
-                                                How long does an OS upgrade take?
-                                            </button>
-                                        </h2>
-                                        <div id="faq3" class="accordion-collapse collapse"
-                                            data-bs-parent="#faqAccordion">
-                                            <div class="accordion-body">
-                                                OS upgrades typically take 15-30 minutes depending on your internet
-                                                connection
-                                                speed and SD card/storage speed. The system will download the image,
-                                                write it to
-                                                storage, and automatically reboot when complete.
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="fpp-faq__item">
+                                <div class="fpp-faq__question">
+                                    Can I roll back an upgrade?
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="fpp-faq__answer">
+                                    <div class="fpp-faq__answer-inner">
+                                        FPP updates can be rolled back via the changelog. OS upgrades are harder to reverse - always backup your configuration first!
                                     </div>
-
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="faq4Header">
-                                            <button class="accordion-button collapsed" type="button"
-                                                data-bs-toggle="collapse" data-bs-target="#faq4" aria-expanded="false">
-                                                Can I downgrade to an older version?
-                                            </button>
-                                        </h2>
-                                        <div id="faq4" class="accordion-collapse collapse"
-                                            data-bs-parent="#faqAccordion">
-                                            <div class="accordion-body">
-                                                Yes, if "Show Legacy OS Versions" is enabled (Advanced UI or higher), you can
-                                                select and
-                                                install older OS versions. However, this is generally not recommended
-                                                unless
-                                                you're troubleshooting a specific issue.
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="fpp-faq__item">
+                                <div class="fpp-faq__question">
+                                    Are my playlists and sequences safe?
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="fpp-faq__answer">
+                                    <div class="fpp-faq__answer-inner">
+                                        Yes! All upgrades preserve your media files. However, backing up before major upgrades is always a good practice.
                                     </div>
-
-                                    <div class="accordion-item">
-                                        <h2 class="accordion-header" id="faq5Header">
-                                            <button class="accordion-button collapsed" type="button"
-                                                data-bs-toggle="collapse" data-bs-target="#faq5" aria-expanded="false">
-                                                What does "Keep /opt/fpp" do?
-                                            </button>
-                                        </h2>
-                                        <div id="faq5" class="accordion-collapse collapse"
-                                            data-bs-parent="#faqAccordion">
-                                            <div class="accordion-body">
-                                                This developer-only option (Developer UI) preserves your /opt/fpp
-                                                directory during
-                                                an OS upgrade. This allows you to keep a custom-built FPP installation
-                                                rather
-                                                than using the version included in the OS image. <b>Only use this if
-                                                    you're
-                                                    actively developing FPP!</b>
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
+                            <div class="fpp-faq__item">
+                                <div class="fpp-faq__question">
+                                    Will my settings, playlists, schedules and sequences be preserved?
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="fpp-faq__answer">
+                                    <div class="fpp-faq__answer-inner">
+                                        Yes! Both update methods preserve your configuration files, sequences, playlists, and media files. Your settings are stored in a directory which is not affected by updates. However, it's always good practice to backup before major upgrades, especially OS upgrades, as they involve more significant changes to the underlying system.
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- Additional Resources -->
-                    <div class="col-md-4">
-                        <div class="resources-card">
-                            <h3><i class="fas fa-link"></i> Resources</h3>
-                            <ul>
-                                <li><i class="fas fa-code-branch"></i> <a href="https://github.com/FalconChristmas/fpp"
-                                        target="_blank">GitHub Repository</a></li>
-                                <li><i class="fas fa-book"></i> <a
-                                        href="https://github.com/FalconChristmas/fpp/blob/master/README.md"
-                                        target="_blank">Documentation</a></li>
-                                <li><i class="fas fa-users"></i> <a href="https://www.facebook.com/groups/falconplayer"
-                                        target="_blank">Facebook
-                                        Group</a></li>
-                                <li><i class="fas fa-comments"></i> <a href="http://forums.falconchristmas.com"
-                                        target="_blank">Forums</a></li>
-                                <li><i class="fas fa-bug"></i> <a href="https://github.com/FalconChristmas/fpp/issues"
-                                        target="_blank">Report Issues</a></li>
-                                <li><i class="fas fa-heart"></i> <a href="system-stats.php" target="_blank">System
-                                        Health</a></li>
-                            </ul>
-                        </div>
-                    </div>
                 </div>
-                <!-- Comparison Table -->
-                <div class="comparison-table card mt-4">
-                    <div class="card-header">
-                        <h3><i class="fas fa-balance-scale"></i> Comparison: FPP Update vs OS Upgrade</h3>
-                    </div>
-                    <div class="card-body">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th class="feature-name">Feature</th>
-                                    <th style="text-align: center;"><i class="fas fa-sync-alt text-success"></i> FPP
-                                        Software Update</th>
-                                    <th style="text-align: center;"><i class="fas fa-compact-disc text-warning"></i> OS
-                                        Upgrade</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="feature-name">Time Required</td>
-                                    <td style="text-align: center;">2-5 minutes</td>
-                                    <td style="text-align: center;">15-30+ minutes</td>
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Reboot Required</td>
-                                    <td style="text-align: center;"><i class="fas fa-question text-warning"></i>
-                                        Sometimes
-                                    </td>
-                                    <td style="text-align: center;"><i class="fas fa-check text-warning"></i> Yes</td>
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Settings Preserved</td>
-                                    <td style="text-align: center;"><i class="fas fa-check text-success"></i> Kept</td>
-                                    <td style="text-align: center;"><i
-                                            class="fas fa-exclamation-triangle text-warning"></i> Backup Recommended*
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Media Files</td>
-                                    <td style="text-align: center;"><i class="fas fa-check text-success"></i> Kept</td>
-                                    <td style="text-align: center;"><i class="fas fa-check text-success"></i> Kept</td>
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Risk Level</td>
-                                    <td style="text-align: center;"><span class="badge bg-success">Low</span></td>
-                                    <td style="text-align: center;"><span class="badge bg-warning">Medium</span></td>
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">OS Security Patches</td>
-                                    <td style="text-align: center;"><i class="fas fa-times text-danger"></i> No</td>
-                                    <td style="text-align: center;"><i class="fas fa-check text-success"></i> Yes</td>
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">Major Version Jump</td>
-                                    <td style="text-align: center;"><i class="fas fa-times text-danger"></i> No</td>
-                                    <td style="text-align: center;"><i class="fas fa-check text-success"></i> Yes</td>
-                                </tr>
-                                <tr>
-                                    <td class="feature-name">New Hardware Support</td>
-                                    <td style="text-align: center;"><i class="fas fa-times text-danger"></i> No</td>
-                                    <td style="text-align: center;"><i class="fas fa-check text-success"></i> Yes</td>
-                                </tr>
 
-                            </tbody>
-                        </table>
-                        <p class="text-muted" style="font-size: 0.85em; margin-top: 10px;">
-                            <i class="fas fa-info-circle"></i> * OS upgrades preserve settings in most cases, but a
-                            backup is always recommended for safety.
-                        </p>
-                    </div>
+                <!-- Resources -->
+                <div class="fpp-info-panel fpp-info-panel--wide">
+                    <h4 class="fpp-info-panel__title"><i class="fas fa-link"></i> Resources</h4>
+                    <ul class="fpp-resources-list fpp-resources-list--spread">
+                        <li><i class="fas fa-code-branch"></i> <a href="https://github.com/FalconChristmas/fpp" target="_blank">GitHub Repository</a></li>
+                        <li><i class="fas fa-book"></i> <a href="https://github.com/FalconChristmas/fpp/blob/master/README.md" target="_blank">Documentation</a></li>
+                        <li><i class="fas fa-users"></i> <a href="https://www.facebook.com/groups/falconplayer" target="_blank">Facebook Group</a></li>
+                        <li><i class="fas fa-comments"></i> <a href="http://forums.falconchristmas.com" target="_blank">Forums</a></li>
+                        <li><i class="fas fa-bug"></i> <a href="https://github.com/FalconChristmas/fpp/issues" target="_blank">Report Issues</a></li>
+                        <li><i class="fas fa-heart"></i> <a href="system-stats.php">System Health</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
