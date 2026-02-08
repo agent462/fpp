@@ -575,265 +575,6 @@
 }
 
 /* ==========================================================================
-   VERSION INDICATOR COMPONENTS
-   ========================================================================== */
-.version-indicator {
-    background-color: var(--fpp-bg-disabled);
-    border: 2px solid var(--fpp-success);
-    border-radius: var(--fpp-radius-lg);
-    padding: var(--fpp-sp-md);
-    margin: var(--fpp-sp-md) 0;
-    cursor: pointer;
-    transition: all var(--fpp-transition-normal);
-}
-
-.version-indicator:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--fpp-shadow-md);
-    border-color: var(--fpp-success-dark);
-}
-
-.version-indicator.os-version {
-    border-color: var(--fpp-warning);
-}
-
-.version-indicator.os-version:hover {
-    border-color: var(--fpp-warning-dark);
-}
-
-.version-indicator .version-progress {
-    display: flex;
-    align-items: center;
-    gap: var(--fpp-sp-md);
-    font-family: var(--fpp-font-mono);
-    font-weight: var(--fpp-fw-bold);
-}
-
-.version-indicator .version-arrow {
-    color: var(--fpp-gray);
-}
-
-.version-indicator .commits-behind {
-    display: flex;
-    align-items: center;
-    gap: var(--fpp-sp-xs);
-    font-size: var(--fpp-fs-base);
-    color: var(--fpp-gray);
-    margin-top: var(--fpp-sp-xs);
-}
-
-/* ==========================================================================
-   UPGRADE PAGE COMPONENTS
-   ========================================================================== */
-.upgrade-card {
-    border: 2px solid var(--fpp-border);
-    border-radius: var(--fpp-radius-lg);
-    padding: var(--fpp-card-padding);
-    margin-bottom: var(--fpp-sp-lg);
-    background-color: var(--fpp-bg-page);
-}
-
-.upgrade-card h3 {
-    color: var(--fpp-text-primary);
-    margin-bottom: var(--fpp-sp-md);
-}
-
-.upgrade-button {
-    width: 100%;
-    padding: 12px;
-    font-size: var(--fpp-fs-lg);
-    margin-top: var(--fpp-sp-sm);
-}
-
-.version-info {
-    background-color: var(--fpp-bg-card);
-    border: 1px solid var(--fpp-border);
-    border-radius: var(--fpp-radius-md);
-    padding: var(--fpp-sp-md);
-    margin-bottom: var(--fpp-sp-lg);
-}
-
-.version-row {
-    display: flex;
-    justify-content: space-between;
-    padding: var(--fpp-spacing-2) 0;
-    border-bottom: 1px solid var(--fpp-border-light);
-}
-
-.version-row:last-child {
-    border-bottom: none;
-}
-
-.version-label {
-    font-weight: var(--fpp-fw-semibold);
-    color: var(--fpp-text-secondary);
-}
-
-.version-value {
-    color: var(--fpp-text-primary);
-}
-
-.update-badge {
-    font-size: var(--fpp-fs-xs);
-    margin-left: var(--fpp-sp-xs);
-}
-
-/* ==========================================================================
-   FAQ ACCORDION STYLING
-   ========================================================================== */
-.faq-accordion .accordion-button {
-    font-size: var(--fpp-fs-sm);
-    padding: 0.6rem 0.85rem;
-    background-color: var(--fpp-bg-card);
-    border: none;
-    font-weight: var(--fpp-fw-semibold);
-    color: var(--fpp-text-primary);
-    position: relative;
-    padding-right: 2.5rem;
-}
-
-.faq-accordion .accordion-button:not(.collapsed) {
-    background-color: var(--fpp-bg-page);
-    color: #000;
-    box-shadow: none;
-}
-
-.faq-accordion .accordion-button:focus {
-    box-shadow: none;
-    border-color: rgba(0, 0, 0, 0.125);
-}
-
-.faq-accordion .accordion-button::after {
-    content: '\f078';
-    font-family: 'Font Awesome 6 Free';
-    font-weight: 900;
-    position: absolute;
-    right: 0.85rem;
-    transition: transform var(--fpp-transition-fast);
-    font-size: var(--fpp-fs-xs);
-}
-
-.faq-accordion .accordion-button:not(.collapsed)::after {
-    transform: rotate(180deg);
-}
-
-.fpp-accordion .accordion-body {
-    font-size: var(--fpp-fs-sm);
-    padding: 0.85rem 1rem;
-    line-height: 1.5;
-    background-color: var(--fpp-bg-page);
-    color: #555;
-}
-
-.faq-accordion .accordion-item {
-    margin-bottom: 0.35rem;
-    border: 1px solid var(--fpp-border-medium);
-    border-radius: var(--fpp-radius-sm);
-    overflow: hidden;
-}
-
-.faq-accordion .accordion-item:last-child {
-    margin-bottom: 0;
-}
-
-/* ==========================================================================
-   UPDATE BANNERS
-   ========================================================================== */
-.update-banner {
-    padding: var(--fpp-card-padding);
-    border-radius: var(--fpp-radius-lg);
-    margin-bottom: var(--fpp-sp-lg);
-    display: flex;
-    align-items: center;
-    gap: var(--fpp-sp-md);
-}
-
-.update-banner.fpp-update {
-    background-color: var(--fpp-success-light);
-    border: 2px solid var(--fpp-success);
-    color: var(--fpp-success-text);
-}
-
-.update-banner.os-update {
-    background-color: var(--fpp-warning-light);
-    border: 2px solid var(--fpp-warning);
-    color: var(--fpp-warning-text);
-}
-
-.update-banner i {
-    font-size: var(--fpp-fs-3xl);
-}
-
-.update-banner .banner-content h4 {
-    margin: 0 0 var(--fpp-sp-xs) 0;
-}
-
-.update-banner .banner-content p {
-    margin: 0;
-}
-
-/* ==========================================================================
-   COMPARISON TABLE
-   ========================================================================== */
-.comparison-table {
-    margin: var(--fpp-sp-2xl) 0;
-}
-
-.comparison-table table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.comparison-table th {
-    background-color: var(--fpp-bg-page);
-    padding: var(--fpp-sp-md);
-    text-align: left;
-    border-bottom: 2px solid var(--fpp-border-medium);
-}
-
-.comparison-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid var(--fpp-border-medium);
-}
-
-.comparison-table tr:last-child td {
-    border-bottom: none;
-}
-
-.comparison-table .feature-name {
-    font-weight: var(--fpp-fw-bold);
-}
-
-/* ==========================================================================
-   RESOURCES CARD
-   ========================================================================== */
-.resources-card {
-    background-color: var(--fpp-bg-page);
-    border: 1px solid var(--fpp-border);
-    border-radius: var(--fpp-radius-md);
-    padding: var(--fpp-card-padding);
-}
-
-.resources-card h3 {
-    margin-bottom: var(--fpp-sp-md);
-}
-
-.resources-card ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.resources-card ul li {
-    padding: var(--fpp-sp-xs) 0;
-}
-
-.resources-card ul li i {
-    width: 20px;
-    text-align: center;
-}
-
-
-/* ==========================================================================
    HEALTH CHECK
    ========================================================================== */
 .fpp-health-summary {
@@ -1171,19 +912,20 @@
     opacity: 1;
 }
 
-/* Memory help popover content */
-.memory-help p {
+/* Help popover content - reusable styles for info popovers */
+.fpp-help-content p {
     margin-bottom: var(--fpp-sp-sm);
     font-size: 13px;
     line-height: 1.4;
 }
 
-.memory-help hr {
+.fpp-help-content hr {
     margin: var(--fpp-sp-sm) 0;
     opacity: 0.2;
 }
 
-.memory-help__color {
+/* Color swatch for help content legends */
+.fpp-help-swatch {
     display: inline-block;
     width: 12px;
     height: 12px;
@@ -1192,49 +934,24 @@
     vertical-align: middle;
 }
 
-.memory-help__color--used {
+.fpp-help-swatch--success {
     background: var(--fpp-success);
 }
 
-.memory-help__color--buffer {
+.fpp-help-swatch--info {
     background: var(--fpp-info);
 }
 
-.memory-help__color--free {
-    background: var(--fpp-gray);
-}
-
-/* Busyness help popover content */
-.busyness-help p {
-    margin-bottom: var(--fpp-sp-sm);
-    font-size: 13px;
-    line-height: 1.4;
-}
-
-.busyness-help hr {
-    margin: var(--fpp-sp-sm) 0;
-    opacity: 0.2;
-}
-
-.busyness-help__color {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-    margin-right: var(--fpp-sp-icon);
-    vertical-align: middle;
-}
-
-.busyness-help__color--green {
-    background: var(--fpp-success);
-}
-
-.busyness-help__color--yellow {
+.fpp-help-swatch--warning {
     background: var(--fpp-warning);
 }
 
-.busyness-help__color--red {
+.fpp-help-swatch--danger {
     background: var(--fpp-danger);
+}
+
+.fpp-help-swatch--muted {
+    background: var(--fpp-gray);
 }
 
 /* ==========================================================================
@@ -1266,8 +983,15 @@
 }
 
 @keyframes pulse-heart {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.15); }
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
 }
 
 .fpp-donate-banner__text {
@@ -1575,7 +1299,7 @@
     border-color: var(--fpp-border);
 }
 
-.fpp-version-indicator--current > i {
+.fpp-version-indicator--current>i {
     color: var(--fpp-success);
     font-size: 1.1rem;
 }
@@ -1916,6 +1640,66 @@
     font-size: var(--fpp-fs-sm);
 }
 
+/* Inline card modifier - horizontal layout with action on right */
+.fpp-card--inline {
+    display: flex;
+    align-items: center;
+    gap: var(--fpp-sp-lg);
+}
+
+.fpp-card--inline .fpp-card__inline-group {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--fpp-sp-lg);
+    flex: 1;
+    min-width: 0;
+}
+
+.fpp-card--inline .fpp-card__icon {
+    flex-shrink: 0;
+}
+
+.fpp-card--inline .fpp-card__content {
+    flex: 1;
+    min-width: 0;
+}
+
+.fpp-card--inline .fpp-card__title {
+    margin-bottom: var(--fpp-sp-xs);
+}
+
+.fpp-card--inline .fpp-card__subtitle {
+    margin: 0;
+}
+
+.fpp-card--inline .fpp-btn {
+    flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+    .fpp-card--inline {
+        flex-wrap: wrap;
+    }
+
+    .fpp-card--inline .fpp-btn {
+        width: 100%;
+        justify-content: center;
+        margin-top: var(--fpp-sp-sm);
+    }
+}
+
+/* Flex card modifier - fills parent and allows actions to push to bottom */
+.fpp-card--flex {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Flex column utility for Bootstrap columns */
+.fpp-col-flex {
+    display: flex;
+}
+
 /* ==========================================================================
    FPP BUTTON COMPONENT
    Consistent button styling with variants
@@ -1995,9 +1779,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--fpp-sp-sm) 0;
+    padding: var(--fpp-sp-md) 0;
     border-bottom: 1px solid var(--fpp-border-light);
     font-size: var(--fpp-fs-base);
+    gap: var(--fpp-sp-md);
+    min-height: 48px;
 }
 
 .fpp-row:last-child {
@@ -2006,11 +1792,14 @@
 
 .fpp-row__label {
     color: var(--fpp-text-muted);
+    flex-shrink: 0;
 }
 
 .fpp-row__value {
     font-weight: var(--fpp-fw-medium);
     color: var(--fpp-text-primary);
+    text-align: right;
+    word-break: break-word;
 }
 
 .fpp-row__value a {
@@ -2030,9 +1819,14 @@
 @media (max-width: 767px) {
     .fpp-col-divider {
         border-right: none;
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-bottom: 0;
+    }
+
+    /* Keep row borders consistent when columns stack */
+    .fpp-col-divider .fpp-row:last-child {
         border-bottom: 1px solid var(--fpp-border-light);
-        padding-bottom: var(--fpp-sp-md);
-        margin-bottom: var(--fpp-sp-md);
     }
 }
 
@@ -2060,6 +1854,187 @@
 }
 
 /* ==========================================================================
+   INFO SECTION Two-Column Layout for Comparison & FAQ
+   Side-by-side panels for contextual information
+   ========================================================================== */
+.fpp-info-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--fpp-sp-xl);
+    margin-bottom: var(--fpp-sp-2xl);
+}
+
+@media (max-width: 900px) {
+    .fpp-info-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+.fpp-info-panel {
+    background: var(--fpp-bg-card);
+    border: 1px solid var(--fpp-border);
+    border-radius: var(--fpp-radius-lg);
+    padding: var(--fpp-sp-xl);
+    box-shadow: var(--fpp-shadow-sm);
+}
+
+.fpp-info-panel__title {
+    font-size: var(--fpp-fs-lg);
+    font-weight: var(--fpp-fw-semibold);
+    color: var(--fpp-text-primary);
+    margin: 0 0 var(--fpp-sp-lg) 0;
+    display: flex;
+    align-items: center;
+    gap: var(--fpp-sp-sm);
+}
+
+/* Wide panel modifier - full width */
+.fpp-info-panel--wide {
+    width: 100%;
+}
+
+/* Resources list styling */
+.fpp-resources-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fpp-sp-sm) var(--fpp-sp-xl);
+}
+
+/* Spread modifier - evenly distributed across full width */
+.fpp-resources-list--spread {
+    justify-content: space-between;
+}
+
+.fpp-resources-list li {
+    display: flex;
+    align-items: center;
+    gap: var(--fpp-sp-sm);
+    font-size: var(--fpp-fs-base);
+}
+
+.fpp-resources-list li i {
+    width: 16px;
+    text-align: center;
+    color: var(--fpp-text-muted);
+}
+
+.fpp-resources-list li a {
+    color: var(--fpp-primary);
+    text-decoration: none;
+}
+
+.fpp-resources-list li a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .fpp-resources-list--spread {
+        justify-content: flex-start;
+        gap: var(--fpp-sp-md) var(--fpp-sp-xl);
+    }
+}
+
+/* ==========================================================================
+   FORM COMPONENTS
+   Styled form elements
+   ========================================================================== */
+.fpp-select {
+    font-family: var(--fpp-font-mono);
+    font-size: var(--fpp-fs-base);
+    padding: var(--fpp-sp-sm) var(--fpp-sp-md);
+    background: #fff;
+    border: 1px solid var(--fpp-border);
+    border-radius: var(--fpp-radius-lg);
+    color: var(--fpp-text-secondary);
+    min-width: 240px;
+    max-width: 100%;
+}
+
+/* ==========================================================================
+   CARD ACTION AREAS
+   Button groups and action containers within cards
+   ========================================================================== */
+.fpp-card__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--fpp-sp-md);
+    flex-wrap: wrap;
+    margin-top: auto;
+    padding-top: var(--fpp-sp-lg);
+}
+
+.fpp-advanced-options {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: var(--fpp-sp-sm);
+    font-size: var(--fpp-fs-sm);
+    color: var(--fpp-text-muted);
+}
+
+/* ==========================================================================
+   CHECKBOX OPTIONS
+   Styled checkbox groups for settings
+   ========================================================================== */
+.fpp-checkbox-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--fpp-sp-lg);
+    margin-top: var(--fpp-sp-md);
+    padding-top: var(--fpp-sp-md);
+    border-top: 1px solid var(--fpp-border-light);
+}
+
+.fpp-checkbox-option {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--fpp-fs-sm);
+    color: var(--fpp-text-muted);
+    cursor: pointer;
+}
+
+.fpp-checkbox-option input[type="checkbox"] {
+    accent-color: var(--fpp-info);
+}
+
+.fpp-checkbox-option--dev input[type="checkbox"] {
+    accent-color: #8b5cf6;
+}
+
+/* ==========================================================================
+   UTILITY CLASSES
+   Common utility patterns
+   ========================================================================== */
+.fpp-text-info-dark {
+    color: var(--fpp-info-text);
+}
+
+/* Block-level note with top margin */
+.fpp-note {
+    display: block;
+    margin-top: var(--fpp-sp-md);
+}
+
+/* Badge size variants */
+.fpp-badge--sm {
+    font-size: 0.5em;
+    padding: 2px 6px;
+}
+
+/* Alert spacing modifiers */
+.fpp-alert--mb-lg {
+    margin-bottom: var(--fpp-sp-lg);
+}
+
+.fpp-alert--mb-md {
+    margin-bottom: var(--fpp-sp-md);
+}
+
+/* ==========================================================================
    RESPONSIVE ADJUSTMENTS
    ========================================================================== */
 @media (max-width: 768px) {
@@ -2070,9 +2045,5 @@
 
     .fpp-gauge__value {
         font-size: var(--fpp-fs-xl);
-    }
-
-    .upgrade-card {
-        padding: var(--fpp-sp-md);
     }
 }
