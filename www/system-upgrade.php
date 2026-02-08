@@ -33,59 +33,6 @@
     unset($output);
     ?>
     <style>
-        .upgrade-card {
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            background-color: #f8f9fa;
-        }
-
-        .upgrade-card h3 {
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-        .upgrade-button {
-            width: 100%;
-            padding: 12px;
-            font-size: 1.1em;
-            margin-top: 10px;
-        }
-
-        .version-info {
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .version-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .version-row:last-child {
-            border-bottom: none;
-        }
-
-        .version-label {
-            font-weight: 600;
-            color: #666;
-        }
-
-        .version-value {
-            color: #333;
-        }
-
-        .update-badge {
-            font-size: 0.75em;
-            margin-left: 5px;
-        }
-
         .faq-accordion .accordion-button {
             font-size: 0.85em;
             padding: 0.6rem 0.85rem;
@@ -166,106 +113,6 @@
             text-align: center;
         }
 
-        .version-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .version-header h2 {
-            margin: 0;
-            font-size: 1.8em;
-        }
-
-        .version-header .git-hash {
-            font-family: monospace;
-            opacity: 0.9;
-            font-size: 0.9em;
-        }
-
-        .update-banner {
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .update-banner.fpp-update {
-            background-color: #d4edda;
-            border: 2px solid #28a745;
-            color: #155724;
-        }
-
-        .update-banner.os-update {
-            background-color: #fff3cd;
-            border: 2px solid #ffc107;
-            color: #856404;
-        }
-
-        .update-banner i {
-            font-size: 2em;
-        }
-
-        .update-banner .banner-content h4 {
-            margin: 0 0 5px 0;
-        }
-
-        .update-banner .banner-content p {
-            margin: 0;
-        }
-
-        .version-indicator {
-            background-color: #e9ecef;
-            border: 2px solid #28a745;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .version-indicator:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-color: #1e7e34;
-        }
-
-        .version-indicator.os-version {
-            border-color: #ffc107;
-        }
-
-        .version-indicator.os-version:hover {
-            border-color: #e0a800;
-        }
-
-        .version-indicator .version-progress {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-family: monospace;
-            font-weight: bold;
-        }
-
-        .version-indicator .version-arrow {
-            color: #6c757d;
-        }
-
-        .version-indicator .commits-behind {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.9em;
-            color: #6c757d;
-            margin-top: 5px;
-        }
-
         .comparison-table {
             margin: 30px 0;
         }
@@ -295,27 +142,6 @@
             font-weight: bold;
         }
 
-        .advanced-card {
-            background-color: #f8f9fa;
-            border: 2px solid #6c757d;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .advanced-card h4 {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .badge.recommended {
-            background-color: #28a745;
-        }
-
-        .badge.advanced {
-            background-color: #6c757d;
-        }
     </style>
     <script>
         var osAssetMap = {};
@@ -522,21 +348,18 @@
                     var remoteVer = data.advancedView.RemoteGitVersion;
 
                     if (data.advancedView.LocalGitVersion) {
-                        $('#localGitValue').html(data.advancedView.LocalGitVersion);
+                        $('#localGitValue').text(data.advancedView.LocalGitVersion);
                         $('#localGitShort').text(data.advancedView.LocalGitVersion);
                     }
 
                     if (remoteVer && remoteVer !== "Unknown" && remoteVer !== "" && remoteVer !== localVer) {
-                        $('#remoteGitValue').html(remoteVer);
+                        // Update available state
                         $('#remoteGitShort').text(remoteVer);
                         $('#gitUpdateBadge').show();
                         $('#fppVersionIndicator').show();
+                        $('#fppVersionCurrent').hide();
                         $('#fppUpdateBanner').show();
-                        $('#fppVersionStatusBadge').removeClass('bg-secondary bg-success').addClass('bg-warning').text('Update Available');
-
-                        // Show commit badges in header
-                        $('#currentCommitBadge').text(localVer);
-                        $('#targetCommitBadge').text(remoteVer);
+                        $('#fppVersionStatusBadge').removeClass('fpp-badge--neutral fpp-badge--success').addClass('fpp-badge--warning').text('Update Available');
 
                         // Fetch commit count from git origin log
                         $.get('api/git/originLog', function (gitData) {
@@ -544,15 +367,13 @@
                                 $('#commitCount').text(gitData.rows.length);
                             }
                         });
-
-                        $('#gitCommitBadges').show();
                     } else {
-                        $('#remoteGitValue').html(remoteVer || '<span class="text-muted">Unknown</span>');
+                        // Up to date state
                         $('#gitUpdateBadge').hide();
                         $('#fppVersionIndicator').hide();
+                        $('#fppVersionCurrent').show();
                         $('#fppUpdateBanner').hide();
-                        $('#fppVersionStatusBadge').removeClass('bg-secondary bg-warning').addClass('bg-success').text('Up to Date');
-                        $('#gitCommitBadges').hide();
+                        $('#fppVersionStatusBadge').removeClass('fpp-badge--neutral fpp-badge--warning').addClass('fpp-badge--success').text('Up to Date');
                     }
 
                     // Show OS version badge
@@ -613,6 +434,17 @@
 
                 $.get(allPlatforms, function (data) {
                     var devMode = (settings['uiLevel'] && (parseInt(settings['uiLevel']) == 3));
+                    var showLegacy = $('#LegacyOS').is(':checked');
+                    // Regex to match versions below 9.0 (With N-1 - update this yearly)
+                    var legacyVersionRegex = /[-_]v?[0-8]\./i;
+
+                    // Show/hide legacy OS warning
+                    if (showLegacy) {
+                        $('#legacyOSWarning').show();
+                    } else {
+                        $('#legacyOSWarning').hide();
+                    }
+
                     if ("files" in data) {
                         for (const file of data["files"]) {
                             osAssetMap[file["asset_id"]] = {
@@ -620,7 +452,13 @@
                                 url: file["url"]
                             };
 
-                            if (!file["downloaded"] && (devMode || !file['filename'].match(/-v?(4\.|5\.[0-4])/))) {
+                            // Skip versions below 9.0 unless Legacy checkbox is checked or dev mode
+                            var isLegacyVersion = legacyVersionRegex.test(file['filename']);
+                            if (isLegacyVersion && !showLegacy && !devMode) {
+                                continue;
+                            }
+
+                            if (!file["downloaded"]) {
                                 $('#osSelect').append($('<option>', {
                                     value: file["asset_id"],
                                     text: file["filename"] + " (download)"
@@ -635,14 +473,6 @@
                         }
                     }
 
-                    //handle what age OS to display
-                    if ($('#LegacyOS').is(':checked')) {
-                        //leave all avail options in place
-                    } else {
-                        //remove legacy files (n-1) - git assetid needs manually updating over time
-                        $('#osSelect option').filter(function () { return parseInt(this.value) < 103024154; }).remove();
-                    }
-
                     //only show alpha and beta images in Advanced ui
                     if (settings['uiLevel'] && (parseInt(settings['uiLevel']) >= 1)) {
                         //leave all avail options in place
@@ -655,6 +485,11 @@
                     var osUpdateFiles = <?php echo json_encode($osUpdateFiles); ?>;
                     var select = $('#osSelect');
                     osUpdateFiles.forEach(element => {
+                        // Skip legacy versions for downloaded files too
+                        var isLegacyVersion = legacyVersionRegex.test(element);
+                        if (isLegacyVersion && !showLegacy && !devMode) {
+                            return;
+                        }
                         if (select.has('option:contains("' + element + '")').length == 0) {
                             $('#osSelect').append($('<option>', {
                                 value: element,
@@ -920,21 +755,23 @@
             <div class="pageContent">
 
                 <!-- Update Banners (conditionally shown) -->
-                <div id="fppUpdateBanner" class="update-banner fpp-update" style="display: none;">
-                    <i class="fas fa-check-circle"></i>
-                    <div class="banner-content">
-                        <h4>FPP Software Update Available!</h4>
-                        <p>A new version of the FPP software is ready to install. Updates typically complete in under 5
-                            minutes and keep all your settings.</p>
+                <div id="fppUpdateBanner" class="fpp-banner fpp-banner--success" style="display: none;">
+                    <div class="fpp-banner__icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="fpp-banner__content">
+                        <div class="fpp-banner__title">FPP Software Update Available!</div>
+                        <p class="fpp-banner__message">A new version of the FPP software is ready to install. Updates typically complete in under 5 minutes and keep all your settings.</p>
                     </div>
                 </div>
 
-                <div id="osUpdateBanner" class="update-banner os-update" style="display: none;">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <div class="banner-content">
-                        <h4>Operating System Upgrade Available</h4>
-                        <p>A major OS version is available. OS upgrades include security patches, new hardware support,
-                            and system improvements. Always backup first!</p>
+                <div id="osUpdateBanner" class="fpp-banner fpp-banner--warning" style="display: none;">
+                    <div class="fpp-banner__icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="fpp-banner__content">
+                        <div class="fpp-banner__title">Operating System Upgrade Available</div>
+                        <p class="fpp-banner__message">A major OS version is available. OS upgrades include security patches, new hardware support, and system improvements. Always backup first!</p>
                     </div>
                 </div>
 
@@ -961,25 +798,227 @@
                     </div>
                 <? } ?>
 
-                <!-- Version Information -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h3><i class="fas fa-info-circle"></i> Version Information</h3>
+                <!-- Upgrade Options -->
+                <div class="row" style="display: flex; flex-wrap: wrap;">
+                    <!-- FPP Software Update -->
+                    <div class="col-md-6" style="display: flex;">
+                        <div class="fpp-card fpp-card--accent fpp-card--accent-success" style="flex: 1; display: flex; flex-direction: column;">
+                            <div class="fpp-card__header">
+                                <div class="fpp-card__icon fpp-card__icon--success">
+                                    <i class="fas fa-sync-alt"></i>
+                                </div>
+                                <div>
+                                    <h3 class="fpp-card__title">
+                                        Update FPP Software
+                                        <span id="gitUpdateBadge" class="fpp-badge fpp-badge--success" style="display: none; font-size: 0.5em; padding: 2px 6px;">Update Available</span>
+                                    </h3>
+                                    <p class="fpp-card__subtitle">Get the latest bug fixes and features. This is safe and quick.</p>
+                                </div>
+                            </div>
+
+                            <div class="fpp-info-grid">
+                                <div class="fpp-info-box fpp-info-box--neutral">
+                                    <div class="fpp-info-box__title"><i class="fas fa-question-circle"></i> When to use</div>
+                                    <ul>
+                                        <li>When "Update Available" badge shows</li>
+                                        <li>For latest bug fixes &amp; features</li>
+                                        <li>Regular maintenance updates</li>
+                                    </ul>
+                                </div>
+                                <div class="fpp-info-box fpp-info-box--info">
+                                    <div class="fpp-info-box__title"><i class="fas fa-info-circle"></i> What it does</div>
+                                    <p>Downloads the latest code changes for your version and rebuilds FPP. Typically takes 2-5 minutes. No reboot required.</p>
+                                </div>
+                            </div>
+
+                            <!-- Version upgrade indicator (update available) -->
+                            <div id="fppVersionIndicator" class="fpp-version-indicator fpp-version-indicator--clickable" style="display: none;" onclick="GetGitOriginLog();" title="Click to preview changes">
+                                <span class="fpp-version-indicator__from" id="localGitShort"><?= $localGitVersion ?></span>
+                                <i class="fas fa-arrow-right fpp-version-indicator__arrow"></i>
+                                <span class="fpp-version-indicator__to" id="remoteGitShort"></span>
+                                <span class="fpp-version-indicator__label"><i class="fas fa-search"></i> <span id="commitCount">0</span> changes behind</span>
+                            </div>
+
+                            <!-- Version indicator (up to date) -->
+                            <div id="fppVersionCurrent" class="fpp-version-indicator fpp-version-indicator--current" style="display: none;">
+                                <i class="fas fa-check-circle"></i>
+                                <span class="fpp-version-indicator__current" id="localGitValue"><?= $localGitVersion ?></span>
+                                <span class="fpp-version-indicator__label">You're up to date!</span>
+                            </div>
+
+                            <div class="card-actions" style="display: flex; align-items: center; gap: var(--fpp-sp-md); flex-wrap: wrap; margin-top: auto; padding-top: var(--fpp-sp-lg);">
+                                <button class="fpp-btn fpp-btn--success" onclick="UpgradeFPP();">
+                                    <i class="fas fa-download"></i> Update FPP Now
+                                </button>
+                                <button class="fpp-btn fpp-btn--outline" onclick="OpenChangelogModal();">
+                                    <i class="fas fa-list"></i> View Changelog
+                                </button>
+                                <?
+                                if ($settings['uiLevel'] > 0) {
+                                    $upgradeSources = array();
+                                    $remotes = getKnownFPPSystems();
+
+                                    if ($settings["Platform"] != "MacOS") {
+                                        $IPs = explode("\n", trim(shell_exec("/sbin/ifconfig -a | cut -f1 | cut -f1 -d' ' | grep -v ^$ | grep -v lo | grep -v eth0:0 | grep -v usb | grep -v SoftAp | grep -v 'can.' | sed -e 's/://g' | while read iface ; do /sbin/ifconfig \$iface | grep 'inet ' | awk '{print \$2}'; done")));
+                                    } else {
+                                        $IPs = explode("\n", trim(shell_exec("/sbin/ifconfig -a | grep 'inet ' | awk '{print \$2}'")));
+                                    }
+                                    $found = 0;
+                                    foreach ($remotes as $desc => $host) {
+                                        if ((!in_array($host, $IPs)) && (!preg_match('/^169\.254\./', $host))) {
+                                            $upgradeSources[$desc] = $host;
+                                            if (isset($settings['UpgradeSource']) && ($settings['UpgradeSource'] == $host)) {
+                                                $found = 1;
+                                            }
+                                        }
+                                    }
+                                    if (!$found && isset($settings['UpgradeSource']) && ($settings['UpgradeSource'] != 'github.com')) {
+                                        $upgradeSources = array($settings['UpgradeSource'] . ' (Unreachable)' => $settings['UpgradeSource'], 'github.com' => 'github.com') + $upgradeSources;
+                                    } else {
+                                        $upgradeSources = array("github.com" => "github.com") + $upgradeSources;
+                                    }
+                                    ?>
+                                    <div class="advanced-options" style="margin-left: auto; display: flex; align-items: center; gap: var(--fpp-sp-sm); font-size: var(--fpp-fs-sm); color: var(--fpp-text-muted);">
+                                        <span class="fpp-badge fpp-badge--info">Adv</span>
+                                        <span>Source:</span>
+                                        <? PrintSettingSelect("FPP Upgrade Source", "UpgradeSource", 0, 0, "github.com", $upgradeSources); ?>
+                                    </div>
+                                <? } ?>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
+
+                    <!-- Operating System Upgrade -->
+                    <div class="col-md-6" style="display: flex;">
+                        <div class="fpp-card fpp-card--accent fpp-card--accent-warning" style="flex: 1; display: flex; flex-direction: column;">
+                            <div class="fpp-card__header">
+                                <div class="fpp-card__icon fpp-card__icon--warning">
+                                    <i class="fas fa-hdd"></i>
+                                </div>
+                                <div>
+                                    <h3 class="fpp-card__title">Upgrade Operating System</h3>
+                                    <p class="fpp-card__subtitle">Upgrade the entire FPP operating system with a new version</p>
+                                </div>
+                            </div>
+
+                            <div class="fpp-info-grid">
+                                <div class="fpp-info-box fpp-info-box--neutral">
+                                    <div class="fpp-info-box__title"><i class="fas fa-question-circle"></i> When to use</div>
+                                    <ul>
+                                        <li>Moving to a new major version (e.g., v9 to v10)</li>
+                                        <li>Release notes specifically recommend it</li>
+                                        <li>Experiencing OS issues</li>
+                                        <li>Applying latest OS security patches</li>
+                                    </ul>
+                                </div>
+                                <div class="fpp-info-box fpp-info-box--info">
+                                    <div class="fpp-info-box__title"><i class="fas fa-info-circle"></i> What it does</div>
+                                    <p>Downloads a complete OS image and updates your current OS. Your media files are preserved, but backing up your configuration is strongly recommended.</p>
+                                    <span style="display: block; margin-top: var(--fpp-sp-md); color: #084298;"><strong>Important:</strong> This takes 15-30+ minutes and requires a reboot. <a href="backup.php">Backup first!</a></span>
+                                </div>
+                            </div>
+
+                            <!-- Warning alert -->
+                            <div class="fpp-alert fpp-alert--warning fpp-alert--compact" style="margin-bottom: var(--fpp-sp-lg);">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span><strong>Warning:</strong> OS upgrade will reboot your system. Ensure no shows are running.</span>
+                            </div>
+
+                            <!-- Legacy OS warning (shown when checkbox is checked) -->
+                            <div id="legacyOSWarning" class="fpp-alert fpp-alert--warning fpp-alert--compact" style="display: none; margin-bottom: var(--fpp-sp-md);">
+                                <i class="fas fa-history"></i>
+                                <span>Installing a legacy OS is generally not recommended unless you're troubleshooting a specific issue.</span>
+                            </div>
+
+                            <div class="card-actions" style="display: flex; align-items: center; gap: var(--fpp-sp-md); flex-wrap: wrap;">
+                                <select id="osSelect" class="form-select" onChange="OSSelectChanged();" style="font-family: var(--fpp-font-mono); font-size: var(--fpp-fs-base); padding: var(--fpp-sp-sm) var(--fpp-sp-md); background: #fff; border: 1px solid var(--fpp-border); border-radius: var(--fpp-radius-lg); color: var(--fpp-text-secondary); min-width: 240px; max-width: 100%;">
+                                    <option value="">-- Select OS Image --</option>
+                                </select>
+                                <button class="fpp-btn fpp-btn--warning" id="osUpgradeButton" onclick="UpgradeOS();" disabled>
+                                    <i class="fas fa-arrow-up"></i> Upgrade OS
+                                </button>
+                                <button class="fpp-btn fpp-btn--secondary" id="osDownloadButton" onclick="DownloadOS();" disabled>
+                                    <i class="fas fa-cloud-download-alt"></i> Download Only
+                                </button>
+                                <button class="fpp-btn fpp-btn--outline" id="osReleaseNotesButton" onclick="ViewOSReleaseNotes();" disabled>
+                                    <i class="fas fa-file-alt"></i> Release Notes
+                                </button>
+                            </div>
+
+                            <? if (isset($settings['uiLevel']) && $settings['uiLevel'] >= 1) { ?>
+                            <div class="checkbox-options" style="display: flex; flex-wrap: wrap; gap: var(--fpp-sp-lg); margin-top: var(--fpp-sp-md); padding-top: var(--fpp-sp-md); border-top: 1px solid var(--fpp-border-light);">
+                                <label class="checkbox-option" style="display: flex; align-items: center; gap: 0.4rem; font-size: var(--fpp-fs-sm); color: var(--fpp-text-muted); cursor: pointer;">
+                                    <input type="checkbox" id="allPlatforms" onChange="PopulateOSSelect();" style="accent-color: var(--fpp-info);">
+                                    <span class="fpp-badge fpp-badge--info">Adv</span>
+                                    Show All Platforms
+                                    <img title='Show both BBB & Pi downloads' src='images/redesign/help-icon.svg' class='icon-help'>
+                                </label>
+                                <label class="checkbox-option" style="display: flex; align-items: center; gap: 0.4rem; font-size: var(--fpp-fs-sm); color: var(--fpp-text-muted); cursor: pointer;">
+                                    <input type="checkbox" id="LegacyOS" onChange="PopulateOSSelect();" style="accent-color: var(--fpp-info);">
+                                    <span class="fpp-badge fpp-badge--info">Adv</span>
+                                    Show Legacy OS
+                                    <img title='Include historic OS releases in listing' src='images/redesign/help-icon.svg' class='icon-help'>
+                                </label>
+                                <? if (isset($settings['uiLevel']) && $settings['uiLevel'] >= 3) { ?>
+                                <label class="checkbox-option" style="display: flex; align-items: center; gap: 0.4rem; font-size: var(--fpp-fs-sm); color: var(--fpp-text-muted); cursor: pointer;">
+                                    <input type="checkbox" id="keepOptFPP" style="accent-color: #8b5cf6;">
+                                    <span class="fpp-badge fpp-badge--dev">Dev</span>
+                                    Keep /opt/fpp
+                                    <img title='WARNING: This will upgrade the OS but will not upgrade the FPP version running in /opt/fpp. This is useful for developers who are developing the code in /opt/fpp and just want the underlying OS upgraded.' src='images/redesign/help-icon.svg' class='icon-help'>
+                                </label>
+                                <? } ?>
+                            </div>
+                            <? } ?>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <? if (isset($settings['uiLevel']) && $settings['uiLevel'] >= 1) { ?>
+                    <!-- Advanced Options Card -->
+                    <div class="fpp-card fpp-card--accent fpp-card--accent-neutral fpp-card--compact">
+                        <div class="fpp-card__header">
+                            <div class="fpp-card__icon fpp-card__icon--neutral">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div>
+                                <h3 class="fpp-card__title">
+                                    Advanced Options
+                                    <span class="fpp-badge fpp-badge--neutral">Advanced</span>
+                                </h3>
+                                <p class="fpp-card__subtitle">Tools for developers and power users</p>
+                            </div>
+                        </div>
+                        <p style="margin: 0 0 var(--fpp-sp-md) 0; color: var(--fpp-text-secondary); font-size: var(--fpp-fs-base);">
+                            Need to roll back changes? You can revert to a previous git commit using the changelog page.
+                            This allows you to undo problematic updates while keeping your configuration.
+                        </p>
+                        <button class="fpp-btn fpp-btn--secondary" onclick="window.location.href='changelog.php';">
+                            <i class="fas fa-history"></i> View Changelog &amp; Revert Options
+                        </button>
+                    </div>
+
+                    <!-- Version Information -->
+                    <div class="fpp-card mt-4">
+                        <div class="fpp-card__header-simple">
+                            <i class="fas fa-info-circle"></i>
+                            <h3>Version Information
+                                <span class="fpp-badge fpp-badge--neutral">Advanced</span>
+                            </h3>
+                        </div>
                         <div class="row">
-                            <div class="col-md-4" style="border-right: 1px solid #dee2e6;">
-                                <div class="version-row">
-                                    <span class="version-label">FPP Version:</span>
-                                    <span class="version-value">
-                                        <span id="fppVersionStatusBadge" class="badge bg-secondary"
-                                            style="font-size: 0.7em; margin-right: 5px;">Checking...</span>
+                            <div class="col-md-4 fpp-col-divider">
+                                <div class="fpp-row">
+                                    <span class="fpp-row__label">FPP Version:</span>
+                                    <span class="fpp-row__value">
+                                        <span id="fppVersionStatusBadge" class="fpp-badge fpp-badge--neutral">Checking...</span>
                                         <span id="fppVersionValue"><?= $fppVersion ?></span>
                                     </span>
                                 </div>
-                                <div class="version-row">
-                                    <span class="version-label">Platform:</span>
-                                    <span class="version-value" id="platformValue">
+                                <div class="fpp-row">
+                                    <span class="fpp-row__label">Platform:</span>
+                                    <span class="fpp-row__value" id="platformValue">
                                         <?php
                                         echo $settings['Platform'];
                                         if (($settings['Variant'] != '') && ($settings['Variant'] != $settings['Platform'])) {
@@ -990,17 +1029,15 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4" style="border-right: 1px solid #dee2e6;">
-                                <div class="version-row">
-                                    <span class="version-label">OS Build:</span>
-                                    <span class="version-value" id="osReleaseValue">--</span>
+                            <div class="col-md-4 fpp-col-divider">
+                                <div class="fpp-row">
+                                    <span class="fpp-row__label">OS Build:</span>
+                                    <span class="fpp-row__value" id="osReleaseValue">--</span>
                                 </div>
-                                <div class="version-row">
-                                    <span class="version-label">OS Version:</span>
-                                    <span class="version-value">
-                                        <span id="osVersionStatusBadge" class="badge bg-secondary"
-                                            style="font-size: 0.7em; margin-right: 5px; display: none;">Up to
-                                            Date</span>
+                                <div class="fpp-row">
+                                    <span class="fpp-row__label">OS Version:</span>
+                                    <span class="fpp-row__value">
+                                        <span id="osVersionStatusBadge" class="fpp-badge fpp-badge--success" style="display: none;">Up to Date</span>
                                         <span id="osVersionValue">--</span>
                                     </span>
                                 </div>
@@ -1008,207 +1045,17 @@
 
                             <div class="col-md-4">
                                 <? if (isset($serialNumber) && $serialNumber != "") { ?>
-                                    <div class="version-row">
-                                        <span class="version-label">Serial Number:</span>
-                                        <span class="version-value"><?= $serialNumber ?></span>
+                                    <div class="fpp-row">
+                                        <span class="fpp-row__label">Serial Number:</span>
+                                        <span class="fpp-row__value"><?= $serialNumber ?></span>
                                     </div>
                                 <? } ?>
-                                <div class="version-row">
-                                    <span class="version-label">Kernel:</span>
-                                    <span class="version-value" id="kernelValue">--</span>
+                                <div class="fpp-row">
+                                    <span class="fpp-row__label">Kernel:</span>
+                                    <span class="fpp-row__value" id="kernelValue">--</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Upgrade Options -->
-                <div class="row">
-                    <!-- FPP Software Update -->
-                    <div class="col-md-6">
-                        <div class="upgrade-card">
-                            <h3>
-                                <i class="fas fa-sync-alt"></i> FPP Software Update
-                                <span id="gitUpdateBadge" class="badge bg-success update-badge"
-                                    style="display: none;">Update Available</span>
-                                <span id="gitCommitBadges"
-                                    style="display: none; font-size: 0.65em; font-weight: normal; margin-left: 10px;">
-                                    <span class="badge bg-secondary" id="currentCommitBadge"
-                                        style="font-family: monospace;"></span>
-                                    <i class="fas fa-arrow-right" style="margin: 0 5px; color: #6c757d;"></i>
-                                    <span class="badge bg-primary" id="targetCommitBadge"
-                                        style="font-family: monospace;"></span>
-                                    <span class="badge bg-info" id="commitCountBadge" style="margin-left: 5px;">
-                                        <i class="fas fa-code-branch"></i> <span id="commitCount">0</span> commits
-                                    </span>
-                                </span>
-                            </h3>
-
-                            <p style="font-size: 0.9em; color: #666;">
-                                Updates the FPP application software (fppd daemon, web interface, scripts, and plugins)
-                                from your current git branch.
-                                This is a lightweight update that preserves all your settings and typically completes in
-                                under a minute.
-                                A reboot is only required if system-level changes are included.
-                            </p>
-
-                            <!-- Clickable Version Indicator -->
-                            <div id="fppVersionIndicator" class="version-indicator" style="display: none;"
-                                onclick="GetGitOriginLog();">
-                                <div class="version-progress">
-                                    <span id="localGitShort"></span>
-                                    <span class="version-arrow"><i class="fas fa-arrow-right"></i></span>
-                                    <span id="remoteGitShort"></span>
-                                </div>
-                                <div class="commits-behind">
-                                    <i class="fas fa-search"></i>
-                                    <span id="commitsBehindText">Click to preview changes</span>
-                                </div>
-                            </div>
-
-                            <div class="version-info">
-                                <div class="version-row">
-                                    <span class="version-label">Local Git:</span>
-                                    <span class="version-value" id="localGitValue"><?= $localGitVersion ?></span>
-                                </div>
-                                <div class="version-row">
-                                    <span class="version-label">Remote Git:</span>
-                                    <span class="version-value"
-                                        id="remoteGitValue"><?= $remoteGitVersion !== 'Unknown' ? $remoteGitVersion : '<span class="text-muted">Unknown</span>' ?></span>
-                                </div>
-                            </div>
-
-                            <?
-                            if ($settings['uiLevel'] > 0) {
-                                $upgradeSources = array();
-                                $remotes = getKnownFPPSystems();
-
-                                if ($settings["Platform"] != "MacOS") {
-                                    $IPs = explode("\n", trim(shell_exec("/sbin/ifconfig -a | cut -f1 | cut -f1 -d' ' | grep -v ^$ | grep -v lo | grep -v eth0:0 | grep -v usb | grep -v SoftAp | grep -v 'can.' | sed -e 's/://g' | while read iface ; do /sbin/ifconfig \$iface | grep 'inet ' | awk '{print \$2}'; done")));
-                                } else {
-                                    $IPs = explode("\n", trim(shell_exec("/sbin/ifconfig -a | grep 'inet ' | awk '{print \$2}'")));
-                                }
-                                $found = 0;
-                                foreach ($remotes as $desc => $host) {
-                                    if ((!in_array($host, $IPs)) && (!preg_match('/^169\.254\./', $host))) {
-                                        $upgradeSources[$desc] = $host;
-                                        if (isset($settings['UpgradeSource']) && ($settings['UpgradeSource'] == $host)) {
-                                            $found = 1;
-                                        }
-                                    }
-                                }
-                                if (!$found && isset($settings['UpgradeSource']) && ($settings['UpgradeSource'] != 'github.com')) {
-                                    $upgradeSources = array($settings['UpgradeSource'] . ' (Unreachable)' => $settings['UpgradeSource'], 'github.com' => 'github.com') + $upgradeSources;
-                                } else {
-                                    $upgradeSources = array("github.com" => "github.com") + $upgradeSources;
-                                }
-                                ?>
-                                <div style="margin: 15px 0;">
-                                    <label><i class='fas fa-fw fa-graduation-cap ui-level-1'></i> Upgrade Source:</label>
-                                    <? PrintSettingSelect("FPP Upgrade Source", "UpgradeSource", 0, 0, "github.com", $upgradeSources); ?>
-                                </div>
-                            <? } ?>
-
-                            <button class="btn btn-primary upgrade-button" onclick="UpgradeFPP();">
-                                <i class="fas fa-download"></i> Update FPP Software
-                            </button>
-
-                            <button class="btn btn-outline-secondary upgrade-button" onclick="OpenChangelogModal();">
-                                <i class="fas fa-list"></i> View Changelog
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Operating System Upgrade -->
-                    <div class="col-md-6">
-                        <div class="upgrade-card">
-                            <h3><i class="fas fa-compact-disc"></i> Operating System Upgrade
-                                <span class="badge bg-warning update-badge">Backup First!</span>
-                            </h3>
-
-                            <p style="font-size: 0.9em; color: #666;">
-                                Replaces the entire operating system with a new FPP OS image. This includes the base
-                                Linux OS, kernel, drivers, and FPP software.
-                                Use this for major version upgrades or when switching hardware platforms.
-                                <strong>Always backup your configuration first!</strong> The process typically takes
-                                15-30 minutes and will automatically reboot your system.
-                            </p>
-
-                            <div class="form-group">
-                                <label for="osSelect"><b>Select OS Version:</b></label>
-                                <select id="osSelect" class="form-control" onChange="OSSelectChanged();">
-                                    <option value="">-- Choose an OS Version --</option>
-                                </select>
-                            </div>
-
-                            <div style="margin: 15px 0; padding: 10px; background-color: #fff3cd; border-radius: 5px;">
-                                <i class="fas fa-exclamation-triangle text-warning"></i>
-                                <b>Warning:</b> OS upgrade will reboot your system. Ensure no shows are running.
-                            </div>
-
-                            <? if (isset($settings['uiLevel']) && $settings['uiLevel'] >= 1) { ?>
-                                <div style="margin: 10px 0;">
-                                    <label style="display: block; margin: 5px 0;">
-                                        <i class='fas fa-fw fa-graduation-cap ui-level-1'></i>
-                                        <input type="checkbox" id="allPlatforms" onChange="PopulateOSSelect();">
-                                        Show All Platforms
-                                        <img title='Show both BBB & Pi downloads' src='images/redesign/help-icon.svg'
-                                            class='icon-help'>
-                                    </label>
-                                    <label style="display: block; margin: 5px 0;">
-                                        <i class='fas fa-fw fa-graduation-cap ui-level-1'></i>
-                                        <input type="checkbox" id="LegacyOS" onChange="PopulateOSSelect();">
-                                        Show Legacy OS Versions
-                                        <img title='Include historic OS releases in listing'
-                                            src='images/redesign/help-icon.svg' class='icon-help'>
-                                    </label>
-                                </div>
-                            <? } ?>
-
-                            <? if (isset($settings['uiLevel']) && $settings['uiLevel'] >= 3) { ?>
-                                <div style="margin: 10px 0;">
-                                    <label>
-                                        <i class='fas fa-fw fa-code ui-level-3'></i>
-                                        <input type="checkbox" id="keepOptFPP">
-                                        Keep /opt/fpp <span class="badge bg-danger">Dev Only</span>
-                                        <img title='WARNING: This will upgrade the OS but will not upgrade the FPP version running in /opt/fpp.  This is useful for developers who are developing the code in /opt/fpp and just want the underlying OS upgraded.'
-                                            src='images/redesign/help-icon.svg' class='icon-help'>
-                                    </label>
-                                </div>
-                            <? } ?>
-
-                            <button class="btn btn-warning" id="osUpgradeButton" onclick="UpgradeOS();" disabled>
-                                <i class="fas fa-sync-alt"></i> Upgrade OS
-                            </button>
-                            <button class="btn btn-info" id="osDownloadButton" onclick="DownloadOS();"
-                                style="margin-left: 10px;" disabled>
-                                <i class="fas fa-download"></i> Download Only
-                            </button>
-                            <button class="btn btn-outline-secondary" id="osReleaseNotesButton"
-                                onclick="ViewOSReleaseNotes();" style="margin-left: 10px;" disabled>
-                                <i class="fas fa-file-alt"></i> Release Notes
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-
-
-                <? if (isset($settings['uiLevel']) && $settings['uiLevel'] >= 1) { ?>
-                    <!-- Advanced Options Card -->
-                    <div class="advanced-card">
-                        <h4>
-                            <i class="fas fa-code"></i> Advanced Options
-                            <span class="badge advanced">UI Level 1+</span>
-                        </h4>
-                        <p style="margin-top: 10px;">
-                            For users who need to roll back changes, you can revert to a previous git commit using the
-                            changelog page.
-                            This allows you to undo problematic updates while keeping your configuration.
-                        </p>
-                        <button class="btn btn-secondary" onclick="window.location.href='changelog.php';">
-                            <i class="fas fa-history"></i> View Changelog & Revert Options
-                        </button>
                     </div>
                 <? } ?>
 
@@ -1294,7 +1141,7 @@
                                         <div id="faq4" class="accordion-collapse collapse"
                                             data-bs-parent="#faqAccordion">
                                             <div class="accordion-body">
-                                                Yes, if "Show Legacy OS Versions" is enabled (UI Level 1+), you can
+                                                Yes, if "Show Legacy OS Versions" is enabled (Advanced UI or higher), you can
                                                 select and
                                                 install older OS versions. However, this is generally not recommended
                                                 unless
@@ -1313,7 +1160,7 @@
                                         <div id="faq5" class="accordion-collapse collapse"
                                             data-bs-parent="#faqAccordion">
                                             <div class="accordion-body">
-                                                This developer-only option (UI Level 3) preserves your /opt/fpp
+                                                This developer-only option (Developer UI) preserves your /opt/fpp
                                                 directory during
                                                 an OS upgrade. This allows you to keep a custom-built FPP installation
                                                 rather
