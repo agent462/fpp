@@ -1287,6 +1287,100 @@
 }
 
 /* ==========================================================================
+   DONATE BANNER COMPONENT
+   ========================================================================== */
+.fpp-donate-banner {
+    background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+    border-radius: var(--fpp-radius-lg);
+    padding: var(--fpp-sp-lg) var(--fpp-sp-xl);
+    margin-bottom: var(--fpp-sp-lg);
+    text-align: center;
+    color: #fff;
+    border: 1px solid #495057;
+}
+
+.fpp-donate-banner__title {
+    font-size: var(--fpp-fs-lg);
+    font-weight: var(--fpp-fw-semibold);
+    margin: 0 0 var(--fpp-sp-xs) 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--fpp-sp-xs);
+}
+
+.fpp-donate-banner__title i {
+    color: var(--fpp-danger);
+    animation: pulse-heart 2s ease-in-out infinite;
+}
+
+@keyframes pulse-heart {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+.fpp-donate-banner__text {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: var(--fpp-fs-sm);
+    margin: 0 0 var(--fpp-sp-md) 0;
+    max-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.4;
+}
+
+.fpp-donate-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--fpp-sp-xs);
+    background: #ffc439;
+    color: #003087;
+    border: none;
+    border-radius: var(--fpp-radius-pill);
+    padding: 8px var(--fpp-sp-xl);
+    font-size: var(--fpp-fs-base);
+    font-weight: var(--fpp-fw-bold);
+    cursor: pointer;
+    transition: all var(--fpp-transition-fast);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    text-decoration: none;
+}
+
+.fpp-donate-btn:hover {
+    background: #f0b90b;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    color: #003087;
+}
+
+.fpp-donate-btn:active {
+    transform: translateY(0);
+    background: #e0a800;
+}
+
+.fpp-donate-btn i {
+    font-size: 1.2em;
+    color: #003087;
+}
+
+.fpp-donate-btn .paypal-logo {
+    flex-shrink: 0;
+}
+
+.fpp-donate-banner__footer {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: var(--fpp-fs-xs);
+    margin-top: var(--fpp-sp-md);
+    margin-bottom: 0;
+    font-style: italic;
+}
+
+.fpp-donate-banner__footer i {
+    margin-right: var(--fpp-sp-xs);
+}
+
+/* ==========================================================================
    RESPONSIVE ADJUSTMENTS
    ========================================================================== */
 @media (max-width: 768px) {
