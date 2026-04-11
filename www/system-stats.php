@@ -518,8 +518,8 @@ if (isset($_GET['cpu'])) {
             });
 
             $.get('api/schedule', function (data) {
-                if (data && data.entries && Array.isArray(data.entries)) {
-                    stats.schedules = data.entries.length;
+                if (data && Array.isArray(data)) {
+                    stats.schedules = data.length;
                 }
                 $('#stat-schedules').text(stats.schedules);
             });
@@ -826,7 +826,8 @@ if (isset($_GET['cpu'])) {
                                 if ($lastBoot != "") {
                                     ?>
                                     <div class="uptime-started"><i class="fas fa-power-off"></i> System started:
-                                        <?php echo $lastBoot; ?></div>
+                                        <?php echo $lastBoot; ?>
+                                    </div>
                                 <?php } ?>
                             </div>
                         </div>
