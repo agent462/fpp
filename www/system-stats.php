@@ -38,7 +38,7 @@ if (isset($_GET['cpu'])) {
 
             // Mark any static checks that didn't receive results as "Skipped"
             var allChecks = healthChecks.left.concat(healthChecks.right);
-            allChecks.forEach(function(check) {
+            allChecks.forEach(function (check) {
                 if (check.static && !receivedChecks[check.id]) {
                     var statusEl = $('#hc-' + check.id);
                     if (statusEl.length) {
@@ -82,14 +82,14 @@ if (isset($_GET['cpu'])) {
                 // Expandable details (warnings)
                 if (check.details && check.details.length > 0) {
                     itemEl.addClass('fpp-health-check__item--expandable');
-                    itemEl.off('click').on('click', function() {
+                    itemEl.off('click').on('click', function () {
                         $(this).toggleClass('fpp-health-check__item--expanded');
                         $('#details-' + check.id).toggleClass('fpp-health-check__details--visible');
                     });
 
                     $('#details-' + check.id).remove();
                     var detailsHtml = '<div class="fpp-health-check__details" id="details-' + check.id + '"><ul>';
-                    check.details.forEach(function(detail) {
+                    check.details.forEach(function (detail) {
                         var escaped = $('<span>').text(detail).html();
                         detailsHtml += '<li><i class="fas fa-circle"></i> ' + escaped + '</li>';
                     });
@@ -138,7 +138,7 @@ if (isset($_GET['cpu'])) {
             var hiddenStyle = check.static ? '' : ' style="display: none;"';
             var statusHtml = check.static
                 ? '<i class="fas fa-spinner fa-spin fpp-health-check__status-icon fpp-status--loading"></i>' +
-                  '<span class="fpp-health-check__status-text">Checking...</span>'
+                '<span class="fpp-health-check__status-text">Checking...</span>'
                 : '';
             return '<li class="fpp-health-check__item" data-check="' + check.id + '"' + hiddenStyle + '>' +
                 '<span class="fpp-health-check__label">' +
@@ -185,14 +185,14 @@ if (isset($_GET['cpu'])) {
             var timestamp = Math.floor(Date.now() / 1000);
 
             fetch('healthCheckSSE.php?timestamp=' + timestamp, { credentials: 'same-origin' })
-                .then(function(response) {
+                .then(function (response) {
                     if (!response.ok) throw new Error('HTTP ' + response.status);
                     var reader = response.body.getReader();
                     var decoder = new TextDecoder();
                     var buffer = '';
 
                     function processStream() {
-                        reader.read().then(function(result) {
+                        reader.read().then(function (result) {
                             if (result.done) {
                                 HealthCheckDone();
                                 return;
@@ -202,7 +202,7 @@ if (isset($_GET['cpu'])) {
                             var lines = buffer.split('\n');
                             buffer = lines.pop();
 
-                            lines.forEach(function(line) {
+                            lines.forEach(function (line) {
                                 if (line.startsWith('data: ')) {
                                     try {
                                         var check = JSON.parse(line.substring(6));
@@ -216,14 +216,14 @@ if (isset($_GET['cpu'])) {
                             });
 
                             processStream();
-                        }).catch(function() {
+                        }).catch(function () {
                             HealthCheckDone();
                         });
                     }
 
                     processStream();
                 })
-                .catch(function() {
+                .catch(function () {
                     HealthCheckDone();
                     $('#healthCheckOutput').html('<div class="alert alert-danger">Failed to run health check</div>');
                 });
@@ -517,42 +517,42 @@ if (isset($_GET['cpu'])) {
                 $('#stat-playlists').text(stats.playlists);
             });
 
-            $.get('api/configfile/schedule.json', function (data) {
+            $.get('api/schedule', function (data) {
                 if (data && data.entries && Array.isArray(data.entries)) {
                     stats.schedules = data.entries.length;
                 }
                 $('#stat-schedules').text(stats.schedules);
             });
 
-            $.get('api/files/sequences', function (data) {
+            $.get('api/files/sequences?nameOnly=1', function (data) {
                 if (data && Array.isArray(data)) {
                     stats.sequences = data.length;
                 }
                 $('#stat-sequences').text(stats.sequences);
             });
 
-            $.get('api/files/music', function (data) {
+            $.get('api/files/music?nameOnly=1', function (data) {
                 if (data && Array.isArray(data)) {
                     stats.audio = data.length;
                 }
                 $('#stat-audio').text(stats.audio);
             });
 
-            $.get('api/files/videos', function (data) {
+            $.get('api/files/videos?nameOnly=1', function (data) {
                 if (data && Array.isArray(data)) {
                     stats.videos = data.length;
                 }
                 $('#stat-videos').text(stats.videos);
             });
 
-            $.get('api/files/effects', function (data) {
+            $.get('api/files/effects?nameOnly=1', function (data) {
                 if (data && Array.isArray(data)) {
                     stats.effects = data.length;
                 }
                 $('#stat-effects').text(stats.effects);
             });
 
-            $.get('api/files/scripts', function (data) {
+            $.get('api/files/scripts?nameOnly=1', function (data) {
                 if (data && Array.isArray(data)) {
                     stats.scripts = data.length;
                 }
@@ -590,7 +590,7 @@ if (isset($_GET['cpu'])) {
                     <?php
                 }
                 ?>
-                
+
                 <!-- Disk Space Warning Banner -->
                 <div id="disk-warning" class="fpp-alert fpp-alert--danger" role="alert" style="display: none;">
                     <i class="fas fa-exclamation-triangle"></i>
@@ -626,7 +626,8 @@ if (isset($_GET['cpu'])) {
                                     <div class="fpp-gauge__circle">
                                         <svg viewBox="0 0 100 100">
                                             <circle class="fpp-gauge__bg" cx="50" cy="50" r="45"></circle>
-                                            <circle class="fpp-gauge__fill fpp-gauge__fill--success" id="cpuGaugeFill" cx="50" cy="50" r="45" stroke-dasharray="0 282.7"></circle>
+                                            <circle class="fpp-gauge__fill fpp-gauge__fill--success" id="cpuGaugeFill"
+                                                cx="50" cy="50" r="45" stroke-dasharray="0 282.7"></circle>
                                         </svg>
                                         <div class="fpp-gauge__value" id="cpuValue">--%</div>
                                     </div>
@@ -647,11 +648,15 @@ if (isset($_GET['cpu'])) {
                         $memFreeUsage = $memInfo['free_percent'];
                         $memTotalUsage = $memInfo['total_used_percent'];
                         $memClass = "fpp-gauge__fill--success";
-                        if ($memUsage > 60) $memClass = "fpp-gauge__fill--warning";
-                        if ($memUsage > 80) $memClass = "fpp-gauge__fill--danger";
+                        if ($memUsage > 60)
+                            $memClass = "fpp-gauge__fill--warning";
+                        if ($memUsage > 80)
+                            $memClass = "fpp-gauge__fill--danger";
 
-                        function formatMemBytes($bytes, $decimals = 1) {
-                            if ($bytes == 0) return '0 B';
+                        function formatMemBytes($bytes, $decimals = 1)
+                        {
+                            if ($bytes == 0)
+                                return '0 B';
                             $k = 1024;
                             $sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
                             $i = floor(log($bytes) / log($k));
@@ -669,14 +674,18 @@ if (isset($_GET['cpu'])) {
                             </div>
                             <div id="memoryHelpContent" style="display: none;">
                                 <div class="fpp-help-content">
-                                    <p><span class="fpp-help-swatch fpp-help-swatch--success"></span><strong>Used Memory</strong><br>
-                                    Memory actively used by applications and the OS.</p>
-                                    <p><span class="fpp-help-swatch fpp-help-swatch--info"></span><strong>Buffer/Cache</strong><br>
-                                    Memory used for disk caching. Can be reclaimed if needed.</p>
-                                    <p><span class="fpp-help-swatch fpp-help-swatch--muted"></span><strong>Free Memory</strong><br>
-                                    Completely unused memory.</p>
+                                    <p><span class="fpp-help-swatch fpp-help-swatch--success"></span><strong>Used
+                                            Memory</strong><br>
+                                        Memory actively used by applications and the OS.</p>
+                                    <p><span
+                                            class="fpp-help-swatch fpp-help-swatch--info"></span><strong>Buffer/Cache</strong><br>
+                                        Memory used for disk caching. Can be reclaimed if needed.</p>
+                                    <p><span class="fpp-help-swatch fpp-help-swatch--muted"></span><strong>Free
+                                            Memory</strong><br>
+                                        Completely unused memory.</p>
                                     <hr>
-                                    <p style="margin-bottom:0;"><em>High buffer/cache is normal — it means your system is efficiently using available RAM.</em></p>
+                                    <p style="margin-bottom:0;"><em>High buffer/cache is normal — it means your system
+                                            is efficiently using available RAM.</em></p>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -684,30 +693,38 @@ if (isset($_GET['cpu'])) {
                                     <div class="fpp-gauge__circle">
                                         <svg viewBox="0 0 100 100">
                                             <circle class="fpp-gauge__bg" cx="50" cy="50" r="45"></circle>
-                                            <circle class="fpp-gauge__fill <?php echo $memClass; ?>" id="memGaugeFill" cx="50" cy="50" r="45"
+                                            <circle class="fpp-gauge__fill <?php echo $memClass; ?>" id="memGaugeFill"
+                                                cx="50" cy="50" r="45"
                                                 stroke-dasharray="<?php printf('%.1f', $memUsage * 2.827); ?> 282.7">
-                                                <title>Used: <?php echo formatMemBytes($memUsed); ?> (<?php printf('%.1f', $memUsage); ?>%)</title>
+                                                <title>Used: <?php echo formatMemBytes($memUsed); ?>
+                                                    (<?php printf('%.1f', $memUsage); ?>%)</title>
                                             </circle>
-                                            <circle class="fpp-gauge__fill fpp-gauge__fill--buffer" cx="50" cy="50" r="45"
+                                            <circle class="fpp-gauge__fill fpp-gauge__fill--buffer" cx="50" cy="50"
+                                                r="45"
                                                 stroke-dasharray="<?php printf('%.1f', $memBufferUsage * 2.827); ?> 282.7"
                                                 style="transform: rotate(<?php printf('%.1f', $memUsage * 3.6); ?>deg); transform-origin: 50% 50%;">
-                                                <title>Buffer/Cache: <?php echo formatMemBytes($memBufferCache); ?> (<?php printf('%.1f', $memBufferUsage); ?>%)</title>
+                                                <title>Buffer/Cache: <?php echo formatMemBytes($memBufferCache); ?>
+                                                    (<?php printf('%.1f', $memBufferUsage); ?>%)</title>
                                             </circle>
                                             <circle class="fpp-gauge__fill fpp-gauge__fill--free" cx="50" cy="50" r="45"
                                                 stroke-dasharray="<?php printf('%.1f', $memFreeUsage * 2.827); ?> 282.7"
                                                 style="transform: rotate(<?php printf('%.1f', $memTotalUsage * 3.6); ?>deg); transform-origin: 50% 50%;">
-                                                <title>Free: <?php echo formatMemBytes($memFree); ?> (<?php printf('%.1f', $memFreeUsage); ?>%)</title>
+                                                <title>Free: <?php echo formatMemBytes($memFree); ?>
+                                                    (<?php printf('%.1f', $memFreeUsage); ?>%)</title>
                                             </circle>
                                         </svg>
                                         <div class="fpp-gauge__value" id="memValue">
                                             <?php printf('%.0f', $memTotalUsage); ?>%
-                                            <span class="fpp-gauge__total"><?php echo formatMemBytes($memTotal); ?></span>
+                                            <span
+                                                class="fpp-gauge__total"><?php echo formatMemBytes($memTotal); ?></span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="fpp-gauge__label">
                                     <?php echo formatMemBytes($memUsed); ?> used
-                                    <span style="opacity: 0.7; margin-left: 4px;">(+<?php echo formatMemBytes($memBufferCache); ?> cache)</span>
+                                    <span
+                                        style="opacity: 0.7; margin-left: 4px;">(+<?php echo formatMemBytes($memBufferCache); ?>
+                                        cache)</span>
                                     <br>
                                     <span style="opacity: 0.7;"><?php echo formatMemBytes($memFree); ?> free</span>
                                 </div>
@@ -724,12 +741,15 @@ if (isset($_GET['cpu'])) {
                                     <div class="fpp-gauge__circle">
                                         <svg viewBox="0 0 100 100">
                                             <circle class="fpp-gauge__bg" cx="50" cy="50" r="45"></circle>
-                                            <circle class="fpp-gauge__fill fpp-gauge__fill--success" id="tempGaugeFill" cx="50" cy="50" r="45" stroke-dasharray="0 282.7"></circle>
+                                            <circle class="fpp-gauge__fill fpp-gauge__fill--success" id="tempGaugeFill"
+                                                cx="50" cy="50" r="45" stroke-dasharray="0 282.7"></circle>
                                         </svg>
                                         <div class="fpp-gauge__value" id="tempValue">--°</div>
                                     </div>
                                 </div>
-                                <div class="fpp-gauge__label" id="tempLabel">CPU Temperature (<?php echo (isset($settings['temperatureInF']) && $settings['temperatureInF'] == 1) ? '°F' : '°C'; ?>)</div>
+                                <div class="fpp-gauge__label" id="tempLabel">CPU Temperature
+                                    (<?php echo (isset($settings['temperatureInF']) && $settings['temperatureInF'] == 1) ? '°F' : '°C'; ?>)
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -804,8 +824,9 @@ if (isset($_GET['cpu'])) {
                                     unset($output);
                                 }
                                 if ($lastBoot != "") {
-                                ?>
-                                <div class="uptime-started"><i class="fas fa-power-off"></i> System started: <?php echo $lastBoot; ?></div>
+                                    ?>
+                                    <div class="uptime-started"><i class="fas fa-power-off"></i> System started:
+                                        <?php echo $lastBoot; ?></div>
                                 <?php } ?>
                             </div>
                         </div>
@@ -833,20 +854,27 @@ if (isset($_GET['cpu'])) {
                                 </h3>
                             </div>
                             <?php
-                            $coresNum = (int)$cores;
+                            $coresNum = (int) $cores;
                             $threshGreen = number_format($coresNum * 0.70, 2);
                             $threshYellow = number_format($coresNum * 0.90, 2);
                             ?>
                             <div id="busynessHelpContent" style="display: none;">
                                 <div class="fpp-help-content">
-                                    <p><span class="fpp-help-swatch fpp-help-swatch--success"></span><strong>Running smoothly</strong> (below <?= $threshGreen ?>)<br>
-                                    Traffic is light — your system has plenty of capacity.</p>
-                                    <p><span class="fpp-help-swatch fpp-help-swatch--warning"></span><strong>Busy</strong> (<?= $threshGreen ?> – <?= $threshYellow ?>)<br>
-                                    Traffic is moderate — things are getting congested.</p>
-                                    <p><span class="fpp-help-swatch fpp-help-swatch--danger"></span><strong>Overloaded</strong> (above <?= $threshYellow ?>)<br>
-                                    Traffic is heavy — your system is in gridlock.</p>
+                                    <p><span class="fpp-help-swatch fpp-help-swatch--success"></span><strong>Running
+                                            smoothly</strong> (below <?= $threshGreen ?>)<br>
+                                        Traffic is light — your system has plenty of capacity.</p>
+                                    <p><span
+                                            class="fpp-help-swatch fpp-help-swatch--warning"></span><strong>Busy</strong>
+                                        (<?= $threshGreen ?> – <?= $threshYellow ?>)<br>
+                                        Traffic is moderate — things are getting congested.</p>
+                                    <p><span
+                                            class="fpp-help-swatch fpp-help-swatch--danger"></span><strong>Overloaded</strong>
+                                        (above <?= $threshYellow ?>)<br>
+                                        Traffic is heavy — your system is in gridlock.</p>
                                     <hr>
-                                    <p style="margin-bottom:0;"><em>Your system is like a highway with <?= $coresNum ?> lanes (CPU cores). The numbers show average load over 1, 5, and 15 minutes. Right now, traffic is <?= $_traffic ?>.</em></p>
+                                    <p style="margin-bottom:0;"><em>Your system is like a highway with <?= $coresNum ?>
+                                            lanes (CPU cores). The numbers show average load over 1, 5, and 15 minutes.
+                                            Right now, traffic is <?= $_traffic ?>.</em></p>
                                 </div>
                             </div>
                             <div class="card-body">
